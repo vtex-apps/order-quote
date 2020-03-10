@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "types": [
+      "bluebird-global",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "target": "es2017",
+    "module": "es6",
+    "lib": [
+      "es2015",
+      "es2016",
+      "dom"
+    ],
+    "sourceMap": false,
+    "outDir": "service",
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "diagnostics": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "typeAcquisition": {
+    "enable": false
+  },
+  "include": [
+    "./typings.d.ts",
+    "./**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,0 +1,34 @@
+mutation getCarts($email: String) @context(scope:"private") {
+  getCarts(email: $email) {
+    email
+    cartName
+    items {
+      name
+      skuName
+      id
+      productId
+      imageUrl
+      listPrice
+      price
+      quantity
+      sellingPrice
+    }
+    creationDate
+    id
+    subtotal
+    discounts
+    shipping
+    total
+    paymentTerm
+    address {
+      city
+      complement
+      country
+      neighborhood
+      number
+      postalCode
+      state
+      street
+    }
+  }
+}

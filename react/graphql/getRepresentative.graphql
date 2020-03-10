@@ -1,0 +1,6 @@
+query getRepresentative {
+  getRepresentative {
+    userEmail
+    userName
+  }
+}

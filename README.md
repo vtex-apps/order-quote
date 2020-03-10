@@ -1,2 +1,0 @@
-# order-quote
-order-quote

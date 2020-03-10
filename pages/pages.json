@@ -1,0 +1,18 @@
+{
+  "pages": {
+    "legacy-save-cart": {
+      "path": "/legacy-extensions/save-cart/cart-list"
+    }
+  },
+  "extensions": {
+    "checkout/buttons/save-cart": {
+      "component": "index"
+    },
+    "legacy-save-cart": {
+      "component": "vtex.render-runtime/LegacyExtensionContainer"
+    },
+    "legacy-save-cart/list": {
+      "component": "cartList"
+    }
+  }
+}

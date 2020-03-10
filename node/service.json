@@ -1,0 +1,32 @@
+{
+  "stack": "nodejs",
+  "memory": 1024,
+  "ttl": 300,
+  "timeout": 60,
+  "routes": {
+    "getSetupConfig": {
+      "path": "/_v/0/orderquote/config",
+      "public": false
+    },
+    "getCarts": {
+      "path": "/_v/0/orderquote/:email/carts/",
+      "public": false
+    },
+    "orderQuote": {
+      "path": "/_v/0/orderquote/carts/",
+      "public": false
+    },
+    "removeCart": {
+      "path": "/_v/0/orderquote/carts/:cartId",
+      "public": false
+    },
+    "useCart": {
+      "path": "/_v/0/orderquote/carts/:orderFormId/use",
+      "public": false
+    },
+    "hello": {
+      "path": "/_v/0/orderquote/hello",
+      "public": true
+    }
+  }
+}

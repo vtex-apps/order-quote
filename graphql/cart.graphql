@@ -1,0 +1,79 @@
+input CartItem {
+  name: String
+  skuName: String
+  id: String
+  productId: String
+  imageUrl: String
+  listPrice: Int
+  price: Int
+  quantity: Int
+  sellingPrice: Int
+}
+
+input Cart {
+  id: String
+  email: String
+  cartName: String
+  items: [CartItem]
+  creationDate: String
+  subtotal: Int
+  discounts: Int
+  shipping: Int
+  total: Int
+  paymentTerm: String
+  address: Address
+}
+
+type CartResponse {
+  email: String
+  cartName: String
+  items: [CartResponseItem]
+  creationDate: String
+  id: String
+  subtotal: Int
+  discounts: Int
+  shipping: Int
+  total: Int
+  paymentTerm: String
+  address: AddressResponse
+}
+
+type CartResponseItem {
+  name: String
+  skuName: String
+  id: String
+  productId: String
+  imageUrl: String
+  listPrice: Int
+  price: Int
+  quantity: Int
+  sellingPrice: Int
+}
+
+input CartUseInfo {
+  id: String
+  quantity: Int
+  sellingPrice: Int
+}
+
+input Address {
+  city: String
+  complement: String
+  country: String
+  neighborhood: String
+  number: String
+  postalCode: String
+  state: String
+  street: String
+}
+
+type AddressResponse {
+  city: String
+  complement: String
+  country: String
+  neighborhood: String
+  number: String
+  postalCode: String
+  state: String
+  street: String
+}

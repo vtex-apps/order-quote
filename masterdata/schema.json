@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "email": { "type": "string", "title":"Email" },
+    "cartName": { "type": "string", "title":"Cart Name" },
+    "items": { "type": "array", "title":"Cart" },
+    "creationDate": { "type": "string", "title":"Creation Date", "format": "date-time" }
+  },
+  "v-indexed": [ "email", "creationDate", "cartName" ],
+  "v-default-fields": [ "email", "cartName", "items", "creationDate"],
+  "v-cache": false
+}
