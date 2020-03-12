@@ -23,10 +23,6 @@
     "useCart": {
       "path": "/_v/0/orderquote/carts/:orderFormId/use",
       "public": false
-    },
-    "hello": {
-      "path": "/_v/0/orderquote/hello",
-      "public": true
     }
   }
 }

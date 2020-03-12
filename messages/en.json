@@ -1,4 +1,4 @@
 {
-  "admin/test": "test",
-  "store/test": "test"
+  "orderquote.create.success": "Quotation saved successfuly",
+  "orderquote.create.error": "Error saving quotation"
 }

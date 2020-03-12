@@ -1,0 +1,14 @@
+{
+  "store.orderquote": {
+    "required": ["orderquote"]
+  },
+  "orderquote": {
+    "component": "QuoteList"
+  },
+  "store.create": {
+    "required": ["create"]
+  },
+  "create": {
+    "component": "QuoteCreate"
+  }
+}

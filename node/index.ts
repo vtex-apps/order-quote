@@ -1,4 +1,3 @@
-// import { mapObjIndexed } from 'ramda'
 import { ClientsConfig, LRUCache, Service, ServiceContext } from '@vtex/api'
 import { Clients } from './clients'
 import { json } from 'co-body'
@@ -52,7 +51,7 @@ declare global {
 export default new Service<Clients, State>({
   clients,
   graphql: {
-    resolvers
+    resolvers,
   },
   routes: {
     orderQuote: async (ctx: any) => {
@@ -70,12 +69,6 @@ export default new Service<Clients, State>({
         ctx.body = e
         ctx.status = 500
       }
-    },
-    hello: async (ctx: any) => {
-      setDefaultHeaders(ctx)
-      console.log(ctx)
-      ctx.body = 'Hello'
-      ctx.status = 500
     },
     removeCart: async (ctx: any) => {
       setDefaultHeaders(ctx)

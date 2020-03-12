@@ -1,0 +1,18 @@
+{
+  "store.orderquote": {
+    "blocks": ["orderquote"]
+  },
+  "orderquote": {
+    "props": {
+      "title": "Order Quote"
+    }
+  },
+  "store.create": {
+    "blocks": ["create"]
+  },
+  "create": {
+    "props": {
+      "title": "Create a quotation"
+    }
+  }
+}
