@@ -1,6 +1,7 @@
 input CartItem {
   name: String
   skuName: String
+  refId: String
   id: String
   productId: String
   imageUrl: String
@@ -42,6 +43,7 @@ type CartResponseItem {
   name: String
   skuName: String
   id: String
+  refId: String
   productId: String
   imageUrl: String
   listPrice: Int

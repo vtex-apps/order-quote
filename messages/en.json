@@ -1,4 +1,17 @@
 {
+  "orderquote.create.title": "Save Quotation",
   "orderquote.create.success": "Quotation saved successfuly",
-  "orderquote.create.error": "Error saving quotation"
+  "orderquote.create.error": "Error saving quotation",
+  "orderquote.create.required": "Type a name for your quotation",
+  "orderquote.create.loadingError": "Error loading cart items",
+  "orderquote.cartList.label.sku": "Ref. Code",
+  "orderquote.cartList.label.itemName": "Item",
+  "orderquote.cartList.label.quantity": "Quantity",
+  "orderquote.cartList.label.price": "Price",
+  "orderquote.cartList.label.total": "Total",
+  "orderquote.button.save": "Save",
+  "orderquote.button.clear": "Clear cart after saving",
+  "orderquote.placeholder.quotationName": "Quotation name",
+  "orderquote.create.placeholder.quotationName": "Quotation name",
+  "orderquote.create.label.quotationName": "Name"
 }

@@ -2,38 +2,37 @@
 /* eslint-disable no-console */
 
 import React, { useState, useContext } from 'react'
-import { Input, Button, Table, ToastContext } from 'vtex.styleguide'
+import { Input, Button, Table, ToastContext, Checkbox } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
 import { useQuery, compose, graphql } from 'react-apollo'
 import { FormattedCurrency } from 'vtex.format-currency'
 import OrderFormQuery from 'vtex.checkout-resources/QueryOrderForm'
 import { OrderForm } from 'vtex.checkout-graphql'
+import { useRuntime } from 'vtex.render-runtime'
 import _ from 'underscore'
-import { injectIntl, WrappedComponentProps } from 'react-intl'
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
-import saveCartMutation from './graphql/saveCart.graphql'
-import getSetupConfig from './graphql/getSetupConfig.graphql'
 
-const DEFAULT_ADMIN_SETUP = {
-  cartName: 'Save Cart',
-  cartLifeSpan: 7,
-  storeLogoUrl: '',
-}
+import saveCartMutation from './graphql/saveCart.graphql'
+import clearCartMutation from './graphql/clearCartMutation.graphql'
 
 const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   SaveCartMutation,
-  GetSetupConfig,
+  ClearCartMutation,
   intl,
 }: any) => {
   const [_state, setState] = useState<any>({
     name: '',
     errorMessage: '',
     savingQuote: false,
+    clearCart: false,
   })
+
+  const { history, navigate } = useRuntime()
 
   const { showToast } = useContext(ToastContext)
 
-  const { name, savingQuote, errorMessage } = _state
+  const { name, savingQuote, errorMessage, clearCart } = _state
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -55,6 +54,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'inputCreate',
     'buttonCreate',
   ] as const
+
   const handles = useCssHandles(CSS_HANDLES)
 
   const { loading, data, error } = useQuery<{
@@ -64,44 +64,52 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   })
 
   if (error) {
-    console.log('Error loading OrderForm', error)
+    toastMessage('orderquote.create.loadingError')
   }
 
   const defaultSchema = {
     properties: {
       productRefId: {
-        title: 'SKU',
-        width: 50,
+        title: translateMessage({
+          id: 'orderquote.cartList.label.sku',
+        }),
+        width: 100,
       },
       skuName: {
-        title: 'Name',
-        width: 500,
+        title: translateMessage({
+          id: 'orderquote.cartList.label.itemName',
+        }),
+        minWidth: 300,
       },
       sellingPrice: {
-        title: 'Price',
-        minWidth: 50,
+        title: translateMessage({
+          id: 'orderquote.cartList.label.price',
+        }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
           return (
-            <span>
+            <span className="tr w-100">
               <FormattedCurrency value={cellData} />
             </span>
           )
         },
       },
       quantity: {
-        title: 'Qty',
-        minWidth: 10,
+        title: translateMessage({
+          id: 'orderquote.cartList.label.quantity',
+        }),
+        width: 100,
       },
       id: {
-        title: 'Total',
-        minWidth: 50,
+        title: translateMessage({
+          id: 'orderquote.cartList.label.total',
+        }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return (
-            <span>
+            <span className="tr w-100">
               <FormattedCurrency
                 value={rowData.sellingPrice * rowData.quantity}
               />
@@ -112,10 +120,25 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     },
   }
 
-  const itemsCopy = data?.orderForm?.items ? data.orderForm.items : []
+  let itemsCopy: any = data?.orderForm?.items ? data.orderForm.items : []
 
   const activeLoading = (status: boolean) => {
     setState({ savingQuote: status })
+  }
+
+  const handleClearCart = (orderFormId: string) => {
+    ClearCartMutation({
+      variables: {
+        orderFormId,
+      },
+    }).then(() => {
+      const url: any = history.location.pathname.split('/')
+      url.pop()
+      itemsCopy = null
+      navigate({
+        to: url.join('/'),
+      })
+    })
   }
 
   const handleSaveCart = () => {
@@ -124,7 +147,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     if (
       name &&
       name.length > 0 &&
-      data.orderForm.items &&
+      data?.orderForm?.items &&
       data.orderForm.items.length
     ) {
       const { totalizers, value, customData, shippingData } = data.orderForm
@@ -140,14 +163,22 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       if (customData) {
         customApps = customData.customApps
       }
-      const subtotal = (totalizers.find(x => x.id === 'Items') || { value: 0 })
-        .value
+      const subtotal = (
+        totalizers.find((x: { id: string }) => x.id === 'Items') || { value: 0 }
+      ).value
+
       const discounts = (
-        totalizers.find(x => x.id === 'Discounts') || { value: 0 }
+        totalizers.find((x: { id: string }) => x.id === 'Discounts') || {
+          value: 0,
+        }
       ).value
+
       const shipping = (
-        totalizers.find(x => x.id === 'Shipping') || { value: 0 }
+        totalizers.find((x: { id: string }) => x.id === 'Shipping') || {
+          value: 0,
+        }
       ).value
+
       const paymentTerm = customApps
         ? customApps[0].fields.PaymentTermDescription
         : ''
@@ -160,6 +191,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           return {
             name: item.name,
             skuName: item.skuName,
+            refId: item.productRefId,
             id: item.id,
             productId: item.productId,
             imageUrl: item.imageUrl,
@@ -183,64 +215,58 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           cart,
         },
       })
-        .then(result => {
-          console.log('Result =>>>>', result, GetSetupConfig)
+        .then((result: any) => {
           if (result.data.orderQuote) {
             cart.id = result.data.orderQuote.substr(5)
             activeLoading(false)
-            const {
-              getSetupConfig: { adminSetup },
-            } = GetSetupConfig
-            const { cartLifeSpan } = adminSetup || DEFAULT_ADMIN_SETUP
-            const isPlural = cartLifeSpan < 2 ? '' : 's'
-            setState({
-              messageSuccess: `Quotation saved, it expires in ${cartLifeSpan} day${isPlural}`,
-            })
             toastMessage('orderquote.create.success')
             activeLoading(false)
+            if (clearCart) {
+              handleClearCart(data.orderForm.id)
+            }
           } else {
-            console.log('Erro 01')
             toastMessage('orderquote.create.error')
             activeLoading(false)
           }
         })
-        .catch(err => {
-          console.log(err)
-          console.log('Erro 02')
+        .catch(() => {
           toastMessage('orderquote.create.error')
           activeLoading(false)
         })
     } else {
       activeLoading(false)
-      console.log('Erro 03')
       toastMessage('orderquote.create.error')
     }
   }
 
   const saveQuote = () => {
-    console.log('saveQuote')
     if (!name) {
-      setState({ errorMessage: 'Type a name for your quotation' })
+      setState({
+        errorMessage: translateMessage({
+          id: 'orderquote.create.required',
+        }),
+      })
     } else {
       handleSaveCart()
     }
   }
 
   return (
-    <div className={`${handles.containerCreate} pv6 ph4 w-60`}>
+    <div className={`${handles.containerCreate} pv6 ph4`}>
       <div className={`${handles.titleCreate} t-heading-2 mb6`}>
-        Save Quotation
+        <FormattedMessage id="orderquote.create.title" />
       </div>
       <div className="flex flex-row">
         <div className={`${handles.inputCreate} mb5 flex flex-column w-50`}>
           <Input
-            placeholder="Quotation name"
+            placeholder={translateMessage({
+              id: 'orderquote.placeholder.quotationName',
+            })}
             dataAttributes={{ 'hj-white-list': true, test: 'string' }}
             label="Name"
             value={name}
             errorMessage={errorMessage}
-            onChange={e => {
-              console.log('onChange', e.target.value)
+            onChange={(e: any) => {
               setState({ name: e.target.value })
             }}
           />
@@ -248,15 +274,33 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         <div
           className={`${handles.buttonCreate} mb5 flex flex-column w-50 items-end pt6`}
         >
-          <Button
-            variation="primary"
-            isLoading={savingQuote}
-            onClick={() => {
-              saveQuote()
-            }}
-          >
-            Save
-          </Button>
+          <div className="flex flex-row">
+            <div className="flex flex-column w-70 pt4">
+              <Checkbox
+                checked={clearCart}
+                id="clear"
+                label={translateMessage({
+                  id: 'orderquote.button.clear',
+                })}
+                name="clearCheckbox"
+                onChange={() => {
+                  setState({ ..._state, clearCart: !clearCart })
+                }}
+                value="option-0"
+              />
+            </div>
+            <div className="flex flex-column w-30">
+              <Button
+                variation="primary"
+                isLoading={savingQuote}
+                onClick={() => {
+                  saveQuote()
+                }}
+              >
+                <FormattedMessage id="orderquote.button.save" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex flex-row">
@@ -267,11 +311,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             items={itemsCopy}
             loading={loading}
             density="high"
-            onRowClick={({ rowData }) => {
-              console.log(
-                `you just clicked ${rowData.name}, number is ${rowData.number} and email ${rowData.email}`
-              )
-            }}
           />
         </div>
       </div>
@@ -292,12 +331,12 @@ interface MessageDescriptor {
 
 export default injectIntl(
   compose(
-    graphql(getSetupConfig, {
-      name: 'GetSetupConfig',
-      options: { ssr: false },
-    }),
     graphql(saveCartMutation, {
       name: 'SaveCartMutation',
+      options: { ssr: false },
+    }),
+    graphql(clearCartMutation, {
+      name: 'ClearCartMutation',
       options: { ssr: false },
     })
   )(QuoteCreate)

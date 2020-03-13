@@ -1,0 +1,3 @@
+mutation clearCartMutation($orderFormId: String) {
+  clearCart(orderFormId: $orderFormId)
+}

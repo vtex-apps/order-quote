@@ -131,6 +131,42 @@ export const resolvers = {
     },
   },
   Mutation: {
+    clearCart: async (_: any, params: any, ctx: any) => {
+      const { vtex: ioContext } = ctx
+      const { account, authToken } = ioContext
+      const token =
+        ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
+        ctx.cookies.get(`VtexIdclientAutCookie`)
+      const useHeaders = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        VtexIdclientAutCookie: token,
+        'Proxy-Authorization': authToken,
+      }
+      try {
+        // CLEAR CURRENT CART
+        await http({
+          method: 'post',
+          url: routes.clearCart(account, params.orderFormId),
+          data: { expectedOrderFormSections: ['items'] },
+          headers: useHeaders,
+        })
+      } catch (e) {
+        const { status, body, details } = errorResponse(e)
+        console.log('CartUseError', 'error', {
+          orderFormId: params.orderFormId,
+          status,
+          body,
+          details,
+        })
+        if (e.message) {
+          throw new GraphQLError(e.message)
+        } else if (e.response && e.response.data && e.response.data.message) {
+          throw new GraphQLError(e.response.data.message)
+        }
+        throw e as GraphQLError
+      }
+    },
     useCart: async (_: any, params: any, ctx: any) => {
       const { vtex: ioContext } = ctx
       const { account, authToken } = ioContext
