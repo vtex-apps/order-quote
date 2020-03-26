@@ -1,8 +1,7 @@
 type GetSetupConfigResponse {
-    adminSetup: AdminSetupResponse
+  adminSetup: AdminSetupResponse
 }
- type AdminSetupResponse {
-    cartName: String
-    cartLifeSpan: Int
-    storeLogoUrl: String
+type AdminSetupResponse {
+  cartLifeSpan: Int
+  storeLogoUrl: String
 }

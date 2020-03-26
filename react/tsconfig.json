@@ -8,7 +8,8 @@
     "types": ["node", "jest", "graphql"],
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2017"
+    "target": "es2017",
+    "lib": ["DOM"]
   },
   "include": ["./typings/*.d.ts", "./**/*.tsx", "./**/*.ts"]
 }

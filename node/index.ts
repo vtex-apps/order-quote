@@ -73,13 +73,12 @@ export default new Service<Clients, State>({
     removeCart: async (ctx: any) => {
       setDefaultHeaders(ctx)
       try {
-        const { cartName, expired } = await json(ctx.req)
+        const { expired } = await json(ctx.req)
         const { cartId: id } = ctx.vtex.route.params
 
         ctx.body = await resolvers.Mutation.removeCart(
           {},
           {
-            cartName,
             expired,
             id,
           },

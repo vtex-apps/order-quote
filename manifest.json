@@ -1,7 +1,7 @@
 {
-  "vendor": "sandboxusdev",
+  "vendor": "vtex",
   "name": "orderquote",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "title": "Order Quote",
   "description": "B2B functionality that ables you to save items from the cart with their current prices to order it later",
   "builders": {
@@ -71,10 +71,6 @@
         "title": "Order Quote Settings",
         "type": "object",
         "properties": {
-          "cartName": {
-            "title": "Order Quote Button Name",
-            "type": "string"
-          },
           "cartLifeSpan": {
             "title": "Lifespan (in days) of saved cart",
             "type": "number",
@@ -86,7 +82,6 @@
           }
         },
         "required": [
-          "cartName",
           "cartLifeSpan",
           "storeLogoUrl"
         ]
@@ -103,7 +98,6 @@
     ],
     "adminSetup": {
       "ui:order": [
-        "cartName",
         "cartLifeSpan",
         "storeLogoUrl"
       ]

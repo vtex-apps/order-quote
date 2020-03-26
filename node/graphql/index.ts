@@ -22,6 +22,10 @@ const routes = {
     `${routes.cartEntity(
       account
     )}/search?email=${email}&_schema=v5&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,paymentTerm,address`,
+  getCart: (account: string, id: string) =>
+    `${routes.cartEntity(
+      account
+    )}/search?id=${id}&_schema=v5&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,paymentTerm,address`,
   removeCart: (account: string, id: string) =>
     `${routes.cartDocuments(account)}/${id}`,
   saveSchema: (account: string) => `${routes.cartEntity(account)}/schemas/v5`,
@@ -218,7 +222,7 @@ export const resolvers = {
           )
         )
 
-        if (params.userType === 'callCenterOperator') {
+        if (params.userType === 'callCenterOperator' || params.userType === 'CALL_CENTER_OPERATOR') {
           const orderItems: any[] = []
           itemsAdded.forEach((item: any, key: number) => {
             orderItems.push({
@@ -326,6 +330,40 @@ export const resolvers = {
       }
     },
 
+    getCart: async (_: any, params: any, ctx: any) => {
+      const { vtex: ioContext } = ctx
+      const { account, authToken } = ioContext
+      const headers = {
+        ...defaultHeaders(authToken),
+        'REST-Range': `resources=0-100`,
+      }
+      const url = routes.getCart(account, encodeURIComponent(params.id))
+      try {
+        const { data } = await http({
+          method: 'get',
+          url,
+          headers,
+        })
+        console.log('getCart', data)
+        return data
+      } catch (e) {
+        console.log(e)
+        const { status, body, details } = errorResponse(e)
+        console.log('CartListError', 'error', {
+          user: params.email,
+          status,
+          body,
+          details,
+        })
+        if (e.message) {
+          throw new GraphQLError(e.message)
+        } else if (e.response && e.response.data && e.response.data.message) {
+          throw new GraphQLError(e.response.data.message)
+        }
+        throw e as GraphQLError
+      }
+    },
+
     removeCart: async (_: any, params: any, ctx: any) => {
       const { vtex: ioContext } = ctx
       const { account, authToken } = ioContext
@@ -351,7 +389,6 @@ export const resolvers = {
         })
         if (result.status === 204) {
           console.log('CartRemoveSuccess', 'info', {
-            cartName: params.cartName,
             cartId: params.id,
             user,
             expired: params.expired,
@@ -362,7 +399,6 @@ export const resolvers = {
         console.log(e)
         const { status, body, details } = errorResponse(e)
         console.log('CartRemoveError', 'error', {
-          cartName: params.cartName,
           cartId: params.id,
           user,
           expired: params.expired,

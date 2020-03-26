@@ -4,5 +4,8 @@
   },
   "store.create": {
     "path": "/orderquote/create"
+  },
+  "store.view": {
+    "path": "/orderquote/view/:id"
   }
 }

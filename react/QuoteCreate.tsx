@@ -1,8 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
-import { Input, Button, Table, ToastContext, Checkbox } from 'vtex.styleguide'
+import {
+  Input,
+  Button,
+  Table,
+  ToastContext,
+  Checkbox,
+  PageHeader,
+} from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
 import { useQuery, compose, graphql } from 'react-apollo'
 import { FormattedCurrency } from 'vtex.format-currency'
@@ -47,15 +54,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
     showToast({ message, action })
   }
-
-  const CSS_HANDLES = [
-    'containerCreate',
-    'titleCreate',
-    'inputCreate',
-    'buttonCreate',
-  ] as const
-
-  const handles = useCssHandles(CSS_HANDLES)
 
   const { loading, data, error } = useQuery<{
     orderForm: OrderForm
@@ -123,7 +121,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   let itemsCopy: any = data?.orderForm?.items ? data.orderForm.items : []
 
   const activeLoading = (status: boolean) => {
-    setState({ savingQuote: status })
+    setState({ ..._state, savingQuote: status })
   }
 
   const handleClearCart = (orderFormId: string) => {
@@ -150,14 +148,33 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       data?.orderForm?.items &&
       data.orderForm.items.length
     ) {
-      const { totalizers, value, customData, shippingData } = data.orderForm
+      const { totalizers, value, customData, shipping } = data.orderForm
 
       let customApps = null
 
       let address = null
 
-      if (shippingData) {
-        address = shippingData.address
+      if (shipping?.selectedAddress) {
+        const {
+          city,
+          complement,
+          country,
+          neighborhood,
+          number,
+          postalCode,
+          state,
+          street,
+        } = shipping.selectedAddress
+        address = {
+          city,
+          complement,
+          country,
+          neighborhood,
+          number,
+          postalCode,
+          state,
+          street,
+        }
       }
 
       if (customData) {
@@ -173,7 +190,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }
       ).value
 
-      const shipping = (
+      const shippingCost = (
         totalizers.find((x: { id: string }) => x.id === 'Shipping') || {
           value: 0,
         }
@@ -204,11 +221,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         creationDate: new Date().toISOString(),
         subtotal,
         discounts,
-        shipping,
+        shipping: shippingCost,
         total: value,
         paymentTerm,
         address,
       }
+
+      console.log('cart', cart)
 
       SaveCartMutation({
         variables: {
@@ -223,6 +242,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             activeLoading(false)
             if (clearCart) {
               handleClearCart(data.orderForm.id)
+            } else {
+              setTimeout(() => {
+                navigate({
+                  to: '/orderquote',
+                })
+              }, 1000)
             }
           } else {
             toastMessage('orderquote.create.error')
@@ -242,6 +267,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const saveQuote = () => {
     if (!name) {
       setState({
+        ..._state,
         errorMessage: translateMessage({
           id: 'orderquote.create.required',
         }),
@@ -251,12 +277,35 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     }
   }
 
+  const CSS_HANDLES = [
+    'containerCreate',
+    'titleCreate',
+    'inputCreate',
+    'buttonsContainer',
+    'checkboxClear',
+    'buttonSave',
+    'listContainer',
+  ] as const
+
+  const handles = useCssHandles(CSS_HANDLES)
+
   return (
     <div className={`${handles.containerCreate} pv6 ph4`}>
-      <div className={`${handles.titleCreate} t-heading-2 mb6`}>
-        <FormattedMessage id="orderquote.create.title" />
-      </div>
-      <div className="flex flex-row">
+      <PageHeader
+        title={translateMessage({
+          id: 'orderquote.create.title',
+        })}
+        linkLabel={translateMessage({
+          id: 'orderquote.button.back',
+        })}
+        onLinkClick={() => {
+          navigate({
+            to: '/orderquote',
+          })
+        }}
+      />
+
+      <div className="flex flex-row ph5 ph7-ns">
         <div className={`${handles.inputCreate} mb5 flex flex-column w-50`}>
           <Input
             placeholder={translateMessage({
@@ -267,12 +316,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             value={name}
             errorMessage={errorMessage}
             onChange={(e: any) => {
-              setState({ name: e.target.value })
+              setState({ ..._state, name: e.target.value })
             }}
           />
         </div>
         <div
-          className={`${handles.buttonCreate} mb5 flex flex-column w-50 items-end pt6`}
+          className={`${handles.buttonsContainer} mb5 flex flex-column w-50 items-end pt6`}
         >
           <div className="flex flex-row">
             <div className="flex flex-column w-70 pt4">
@@ -303,8 +352,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-row">
-        <div className="flex flex-column w-100 mb5">
+      <div className="flex flex-row ph5 ph7-ns">
+        <div className={`flex flex-column w-100 mb5 ${handles.listContainer}`}>
           <Table
             fullWidth
             schema={defaultSchema}

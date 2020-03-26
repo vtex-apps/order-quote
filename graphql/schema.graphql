@@ -6,7 +6,8 @@ type Query {
 type Mutation {
   orderQuote(cart: Cart): String @cacheControl(scope: PRIVATE)
   getCarts(email: String): [CartResponse] @cacheControl(scope: PRIVATE)
-  removeCart(id: String, cartName: String, expired: Boolean): Boolean!
+  getCart(id: String): [CartResponse] @cacheControl(scope: PRIVATE)
+  removeCart(id: String, expired: Boolean): Boolean!
     @cacheControl(scope: PRIVATE)
   useCart(orderFormId: String, items: [CartUseInfo], userType: String): String
     @cacheControl(scope: PRIVATE)

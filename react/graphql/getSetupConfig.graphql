@@ -1,7 +1,6 @@
 query getSetupConfig {
   getSetupConfig {
     adminSetup {
-      cartName
       cartLifeSpan
       storeLogoUrl
     }
