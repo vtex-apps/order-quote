@@ -119,9 +119,6 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   ] as const
   const handles = useCssHandles(CSS_HANDLES)
 
-  // eslint-disable-next-line no-console
-  console.log('quoteList', quoteList)
-
   return (
     <div className={`${handles.containerList}`}>
       <PageHeader

@@ -187,9 +187,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
     }).then((res: any) => {
       if (res?.data?.getCart) {
-        // eslint-disable-next-line no-console
-        console.log('GetSetupConfig', GetSetupConfig)
-
         const {
           getSetupConfig: { adminSetup },
         } = GetSetupConfig

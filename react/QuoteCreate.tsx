@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -226,8 +225,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         paymentTerm,
         address,
       }
-
-      console.log('cart', cart)
 
       SaveCartMutation({
         variables: {
