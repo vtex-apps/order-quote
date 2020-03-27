@@ -279,7 +279,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const CSS_HANDLES = [
     'containerCreate',
-    'titleCreate',
     'inputCreate',
     'buttonsContainer',
     'checkboxClear',
@@ -324,7 +323,9 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           className={`${handles.buttonsContainer} mb5 flex flex-column w-50 items-end pt6`}
         >
           <div className="flex flex-row">
-            <div className="flex flex-column w-70 pt4">
+            <div
+              className={`flex flex-column w-70 pt4 ${handles.checkboxClear}`}
+            >
               <Checkbox
                 checked={clearCart}
                 id="clear"
@@ -338,7 +339,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 value="option-0"
               />
             </div>
-            <div className="flex flex-column w-30">
+            <div className={`flex flex-column w-30 ${handles.buttonSave}`}>
               <Button
                 variation="primary"
                 isLoading={savingQuote}

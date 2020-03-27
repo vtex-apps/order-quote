@@ -314,8 +314,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const CSS_HANDLES = [
     'containerView',
-    'titleView',
-    'inputCreate',
     'buttonDelete',
     'buttonPrint',
     'buttonUse',
@@ -331,7 +329,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   return (
     <div className={`${handles.containerView}`}>
-      <div className={`${handles.titleView} noPrinting`}>
+      <div className={`noPrinting`}>
         <PageHeader
           title={translateMessage({
             id: 'orderquote.view.title',

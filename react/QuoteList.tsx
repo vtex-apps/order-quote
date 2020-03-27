@@ -113,7 +113,6 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const CSS_HANDLES = [
     'containerList',
-    'titleList',
     'createButton',
     'inputCreate',
     'listContainer',
