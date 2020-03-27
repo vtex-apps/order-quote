@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Translation files for Spanish and Portuguese
+- Updating semantic for the translation files and reference key
+
 ## [0.1.0] - 2020-03-27
 
 ### Added
