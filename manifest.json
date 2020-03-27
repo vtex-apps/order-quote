@@ -3,7 +3,7 @@
   "name": "orderquote",
   "version": "0.1.0",
   "title": "Order Quote",
-  "description": "B2B functionality that ables you to save items from the cart with their current prices to order it later",
+  "description": "B2B functionality that enables you to save items from the cart with their current prices for further use",
   "builders": {
     "graphql": "1.x",
     "react": "3.x",
@@ -25,9 +25,7 @@
     "vtex.css-handles": "0.x",
     "vtex.format-currency": "0.x"
   },
-  "registries": [
-    "smartcheckout"
-  ],
+  "registries": ["smartcheckout"],
   "policies": [
     {
       "name": "read-workspace-apps"
@@ -81,26 +79,15 @@
             "type": "string"
           }
         },
-        "required": [
-          "cartLifeSpan",
-          "storeLogoUrl"
-        ]
+        "required": ["cartLifeSpan", "storeLogoUrl"]
       }
     },
-    "required": [
-      "adminSetup"
-    ]
+    "required": ["adminSetup"]
   },
   "settingsUiSchema": {
-    "ui:order": [
-      "adminSetup",
-      "hasSchema"
-    ],
+    "ui:order": ["adminSetup", "hasSchema"],
     "adminSetup": {
-      "ui:order": [
-        "cartLifeSpan",
-        "storeLogoUrl"
-      ]
+      "ui:order": ["cartLifeSpan", "storeLogoUrl"]
     },
     "hasSchema": {
       "ui:widget": "hidden"
