@@ -10,7 +10,7 @@ const PrintButton: FC<Props> = ({ isLoading, disabled }: any) => {
       isLoading={isLoading}
       disabled={disabled}
     >
-      <FormattedMessage id="orderquote.button.print" />
+      <FormattedMessage id="store/orderquote.button.print" />
     </Button>
   )
 }
