@@ -38,3 +38,9 @@ build
 lerna-debug.log
 yarn-error.log
 *.orig
+*.lock
+react/node_modules
+node/node_modules
+react/package-lock.json
+node/package-lock.json
+node/node_modules
