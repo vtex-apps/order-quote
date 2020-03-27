@@ -69,14 +69,14 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     summary: [
       {
         label: translateMessage({
-          id: 'orderquote.summary.subtotal',
+          id: 'store/orderquote.summary.subtotal',
         }),
         value: 0,
         isLoading: true,
       },
       {
         label: translateMessage({
-          id: 'orderquote.summary.shipping',
+          id: 'store/orderquote.summary.shipping',
         }),
         value: 0,
         isLoading: true,
@@ -84,14 +84,14 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
       {
         label: translateMessage({
-          id: 'orderquote.summary.discounts',
+          id: 'store/orderquote.summary.discounts',
         }),
         value: 0,
         isLoading: true,
       },
       {
         label: translateMessage({
-          id: 'orderquote.summary.total',
+          id: 'store/orderquote.summary.total',
         }),
         value: 0,
         isLoading: true,
@@ -133,7 +133,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }
 
   if (orderFormError) {
-    toastMessage('orderquote.view.error.orderForm')
+    toastMessage('store/orderquote.view.error.orderForm')
   }
 
   const handleRemoveCart = () => {
@@ -174,7 +174,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     UseCart({
       variables,
     }).then(() => {
-      toastMessage('orderquote.view.success')
+      toastMessage('store/orderquote.view.success')
       window.location.replace('/checkout/#/cart')
     })
   }
@@ -212,28 +212,28 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           summary: [
             {
               label: translateMessage({
-                id: 'orderquote.summary.subtotal',
+                id: 'store/orderquote.summary.subtotal',
               }),
               value: <FormattedCurrency value={subtotal} />,
               isLoading: false,
             },
             {
               label: translateMessage({
-                id: 'orderquote.summary.shipping',
+                id: 'store/orderquote.summary.shipping',
               }),
               value: <FormattedCurrency value={shipping} />,
               isLoading: false,
             },
             {
               label: translateMessage({
-                id: 'orderquote.summary.discounts',
+                id: 'store/orderquote.summary.discounts',
               }),
               value: <FormattedCurrency value={discounts} />,
               isLoading: false,
             },
             {
               label: translateMessage({
-                id: 'orderquote.summary.total',
+                id: 'store/orderquote.summary.total',
               }),
               value: <FormattedCurrency value={total} />,
               isLoading: false,
@@ -242,7 +242,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           loading: false,
         })
       } else {
-        toastMessage('orderquote.list.loadingError')
+        toastMessage('store/orderquote.list.loadingError')
       }
     })
   }
@@ -251,19 +251,19 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     properties: {
       refId: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.sku',
+          id: 'store/orderquote.cartList.label.sku',
         }),
         width: 100,
       },
       skuName: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.itemName',
+          id: 'store/orderquote.cartList.label.itemName',
         }),
         minWidth: 300,
       },
       sellingPrice: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.price',
+          id: 'store/orderquote.cartList.label.price',
         }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -277,13 +277,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
       quantity: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.quantity',
+          id: 'store/orderquote.cartList.label.quantity',
         }),
         width: 100,
       },
       id: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.total',
+          id: 'store/orderquote.cartList.label.total',
         }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -329,10 +329,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       <div className={`noPrinting`}>
         <PageHeader
           title={translateMessage({
-            id: 'orderquote.view.title',
+            id: 'store/orderquote.view.title',
           })}
           linkLabel={translateMessage({
-            id: 'orderquote.button.back',
+            id: 'store/orderquote.button.back',
           })}
           onLinkClick={() => {
             navigate({
@@ -354,7 +354,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                       handleModalToggle()
                     }}
                   >
-                    <FormattedMessage id="orderquote.button.delete" />
+                    <FormattedMessage id="store/orderquote.button.delete" />
                   </Button>
                 </div>
                 <div className={`mr5 ${handles.buttonPrint}`}>
@@ -372,7 +372,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                       handleUseCart()
                     }}
                   >
-                    <FormattedMessage id="orderquote.button.use" />
+                    <FormattedMessage id="store/orderquote.button.use" />
                   </Button>
                 </div>
               </div>
@@ -398,26 +398,26 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               )}
               <div className={`mb2 ${handles.field}`}>
                 <span className="b">
-                  <FormattedMessage id="orderquote.view.label.cartName" />
+                  <FormattedMessage id="store/orderquote.view.label.cartName" />
                 </span>
                 : {quoteList.cartName}
               </div>
               <div className={`mb2 ${handles.field}`}>
                 <span className="b">
-                  <FormattedMessage id="orderquote.view.label.creationDate" />
+                  <FormattedMessage id="store/orderquote.view.label.creationDate" />
                 </span>
                 : {formatDate(quoteList.creationDate)}
               </div>
               <div className={`mb2 ${handles.field}`}>
                 <span className="b">
-                  <FormattedMessage id="orderquote.view.label.expirationDate" />
+                  <FormattedMessage id="store/orderquote.view.label.expirationDate" />
                 </span>
                 : {formatDate(expires)}
               </div>
               {!!quoteList.paymentTerm && (
                 <div className={`mb4 ${handles.field}`}>
                   <span className="b">
-                    <FormattedMessage id="orderquote.view.label.paymentTerm" />
+                    <FormattedMessage id="store/orderquote.view.label.paymentTerm" />
                   </span>
                   : {quoteList.paymentTerm}
                 </div>
@@ -425,18 +425,18 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               {!!quoteList.address && (
                 <div>
                   <div className="mb2 mt5 b">
-                    <FormattedMessage id="orderquote.view.label.address" />
+                    <FormattedMessage id="store/orderquote.view.label.address" />
                   </div>
                   <div className={`${quoteList.address ? '' : 'dn'}`}>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.street" />
+                        <FormattedMessage id="store/orderquote.view.label.street" />
                       </span>
                       : {quoteList?.address?.street}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.number" />
+                        <FormattedMessage id="store/orderquote.view.label.number" />
                       </span>
                       : {quoteList?.address?.number}
                     </div>
@@ -446,37 +446,37 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                       }`}
                     >
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.complement" />
+                        <FormattedMessage id="store/orderquote.view.label.complement" />
                       </span>
                       : {quoteList?.address?.complement}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.neighborhood" />
+                        <FormattedMessage id="store/orderquote.view.label.neighborhood" />
                       </span>
                       : {quoteList?.address?.neighborhood}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.city" />
+                        <FormattedMessage id="store/orderquote.view.label.city" />
                       </span>
                       : {quoteList?.address?.city}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.state" />
+                        <FormattedMessage id="store/orderquote.view.label.state" />
                       </span>
                       : {quoteList?.address?.state}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.postalCode" />
+                        <FormattedMessage id="store/orderquote.view.label.postalCode" />
                       </span>
                       : {quoteList?.address?.postalCode}
                     </div>
                     <div className={`mb2 ${handles.field}`}>
                       <span className="b">
-                        <FormattedMessage id="orderquote.view.label.country" />
+                        <FormattedMessage id="store/orderquote.view.label.country" />
                       </span>
                       : {quoteList?.address?.country}
                     </div>
@@ -509,23 +509,23 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         confirmation={{
           onClick: handleRemoveCart,
           label: translateMessage({
-            id: 'orderquote.delete.confirmation.yes',
+            id: 'store/orderquote.delete.confirmation.yes',
           }),
         }}
         cancelation={{
           onClick: handleModalToggle,
           label: translateMessage({
-            id: 'orderquote.delete.confirmation.no',
+            id: 'store/orderquote.delete.confirmation.no',
           }),
         }}
         isOpen={isModalOpen}
         onClose={handleModalToggle}
       >
         <h1>
-          <FormattedMessage id="orderquote.delete.confirmation.title" />
+          <FormattedMessage id="store/orderquote.delete.confirmation.title" />
         </h1>
         <p>
-          <FormattedMessage id="orderquote.delete.confirmation.message" />
+          <FormattedMessage id="store/orderquote.delete.confirmation.message" />
         </p>
       </ModalDialog>
     </div>

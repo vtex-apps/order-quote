@@ -123,7 +123,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     <div className={`${handles.containerList}`}>
       <PageHeader
         title={translateMessage({
-          id: 'orderquote.list.title',
+          id: 'store/orderquote.list.title',
         })}
       >
         <div className={`${handles.createButton}`}>
@@ -135,7 +135,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               })
             }}
           >
-            <FormattedMessage id="orderquote.button.new" />
+            <FormattedMessage id="store/orderquote.button.new" />
           </Button>
         </div>
       </PageHeader>

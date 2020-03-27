@@ -61,26 +61,26 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   })
 
   if (error) {
-    toastMessage('orderquote.create.loadingError')
+    toastMessage('store/orderquote.create.loadingError')
   }
 
   const defaultSchema = {
     properties: {
       productRefId: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.sku',
+          id: 'store/orderquote.cartList.label.sku',
         }),
         width: 100,
       },
       skuName: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.itemName',
+          id: 'store/orderquote.cartList.label.itemName',
         }),
         minWidth: 300,
       },
       sellingPrice: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.price',
+          id: 'store/orderquote.cartList.label.price',
         }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -94,13 +94,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
       quantity: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.quantity',
+          id: 'store/orderquote.cartList.label.quantity',
         }),
         width: 100,
       },
       id: {
         title: translateMessage({
-          id: 'orderquote.cartList.label.total',
+          id: 'store/orderquote.cartList.label.total',
         }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -235,7 +235,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           if (result.data.orderQuote) {
             cart.id = result.data.orderQuote.substr(5)
             activeLoading(false)
-            toastMessage('orderquote.create.success')
+            toastMessage('store/orderquote.create.success')
             activeLoading(false)
             if (clearCart) {
               handleClearCart(data.orderForm.id)
@@ -247,17 +247,17 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               }, 1000)
             }
           } else {
-            toastMessage('orderquote.create.error')
+            toastMessage('store/orderquote.create.error')
             activeLoading(false)
           }
         })
         .catch(() => {
-          toastMessage('orderquote.create.error')
+          toastMessage('store/orderquote.create.error')
           activeLoading(false)
         })
     } else {
       activeLoading(false)
-      toastMessage('orderquote.create.error')
+      toastMessage('store/orderquote.create.error')
     }
   }
 
@@ -266,7 +266,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       setState({
         ..._state,
         errorMessage: translateMessage({
-          id: 'orderquote.create.required',
+          id: 'store/orderquote.create.required',
         }),
       })
     } else {
@@ -289,10 +289,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     <div className={`${handles.containerCreate} pv6 ph4`}>
       <PageHeader
         title={translateMessage({
-          id: 'orderquote.create.title',
+          id: 'store/orderquote.create.title',
         })}
         linkLabel={translateMessage({
-          id: 'orderquote.button.back',
+          id: 'store/orderquote.button.back',
         })}
         onLinkClick={() => {
           navigate({
@@ -305,7 +305,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         <div className={`${handles.inputCreate} mb5 flex flex-column w-50`}>
           <Input
             placeholder={translateMessage({
-              id: 'orderquote.placeholder.quotationName',
+              id: 'store/orderquote.placeholder.quotationName',
             })}
             dataAttributes={{ 'hj-white-list': true, test: 'string' }}
             label="Name"
@@ -327,7 +327,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 checked={clearCart}
                 id="clear"
                 label={translateMessage({
-                  id: 'orderquote.button.clear',
+                  id: 'store/orderquote.button.clear',
                 })}
                 name="clearCheckbox"
                 onChange={() => {
@@ -344,7 +344,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                   saveQuote()
                 }}
               >
-                <FormattedMessage id="orderquote.button.save" />
+                <FormattedMessage id="store/orderquote.button.save" />
               </Button>
             </div>
           </div>
