@@ -1,6 +1,6 @@
 {
   "name": "vtex.orderquote",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "dependencies": {
     "@types/co-body": "0.0.3",
     "@vtex/api": "^3.0.0",

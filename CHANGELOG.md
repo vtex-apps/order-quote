@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2020-03-28
+
 ### Added
 
 - Validating if user is authenticated before allowing it to save a quotation
