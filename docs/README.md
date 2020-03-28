@@ -9,7 +9,7 @@ This app provides **B2B** capabilities to save a Cart (Items, Quantities and Pri
 ## Configuration
 
 Install this app by running `vtex install vtex.orderquote`, after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
-It's important to keep in mind that in order to use its full functionality, users must have **Callcenter Operator** credentials
+It's important to keep in mind that in order to use its full functionality, users must have **Callcenter Operator** credentials, because only **Callcenter Operator** has **authorization** to place order with price changes on the items
 
 ![Callcenter Credential](./image/callcenter.png)
 

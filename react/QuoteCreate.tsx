@@ -139,125 +139,130 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }
 
   const handleSaveCart = () => {
-    activeLoading(true)
+    if (!data?.orderForm?.clientProfileData?.email) {
+      toastMessage('store/orderquote.error.notAuthenticated')
+    } else {
+      activeLoading(true)
+      if (
+        name &&
+        name.length > 0 &&
+        data?.orderForm?.items &&
+        data.orderForm.items.length
+      ) {
+        const { totalizers, value, customData, shipping } = data.orderForm
 
-    if (
-      name &&
-      name.length > 0 &&
-      data?.orderForm?.items &&
-      data.orderForm.items.length
-    ) {
-      const { totalizers, value, customData, shipping } = data.orderForm
+        let customApps = null
 
-      let customApps = null
+        let address = null
 
-      let address = null
-
-      if (shipping?.selectedAddress) {
-        const {
-          city,
-          complement,
-          country,
-          neighborhood,
-          number,
-          postalCode,
-          state,
-          street,
-        } = shipping.selectedAddress
-        address = {
-          city,
-          complement,
-          country,
-          neighborhood,
-          number,
-          postalCode,
-          state,
-          street,
-        }
-      }
-
-      if (customData) {
-        customApps = customData.customApps
-      }
-      const subtotal = (
-        totalizers.find((x: { id: string }) => x.id === 'Items') || { value: 0 }
-      ).value
-
-      const discounts = (
-        totalizers.find((x: { id: string }) => x.id === 'Discounts') || {
-          value: 0,
-        }
-      ).value
-
-      const shippingCost = (
-        totalizers.find((x: { id: string }) => x.id === 'Shipping') || {
-          value: 0,
-        }
-      ).value
-
-      const paymentTerm = customApps
-        ? customApps[0].fields.PaymentTermDescription
-        : ''
-
-      const cart = {
-        id: null,
-        email: data.orderForm.clientProfileData.email,
-        cartName: name,
-        items: _.map(data.orderForm.items, (item: any) => {
-          return {
-            name: item.name,
-            skuName: item.skuName,
-            refId: item.productRefId,
-            id: item.id,
-            productId: item.productId,
-            imageUrl: item.imageUrl,
-            listPrice: item.listPrice,
-            price: item.price,
-            quantity: item.quantity,
-            sellingPrice: item.sellingPrice,
+        if (shipping?.selectedAddress) {
+          const {
+            city,
+            complement,
+            country,
+            neighborhood,
+            number,
+            postalCode,
+            state,
+            street,
+          } = shipping.selectedAddress
+          address = {
+            city,
+            complement,
+            country,
+            neighborhood,
+            number,
+            postalCode,
+            state,
+            street,
           }
-        }),
-        creationDate: new Date().toISOString(),
-        subtotal,
-        discounts,
-        shipping: shippingCost,
-        total: value,
-        paymentTerm,
-        address,
-      }
+        }
 
-      SaveCartMutation({
-        variables: {
-          cart,
-        },
-      })
-        .then((result: any) => {
-          if (result.data.orderQuote) {
-            cart.id = result.data.orderQuote.substr(5)
-            activeLoading(false)
-            toastMessage('store/orderquote.create.success')
-            activeLoading(false)
-            if (clearCart) {
-              handleClearCart(data.orderForm.id)
-            } else {
-              setTimeout(() => {
-                navigate({
-                  to: '/orderquote',
-                })
-              }, 1000)
+        if (customData) {
+          customApps = customData.customApps
+        }
+        const subtotal = (
+          totalizers.find((x: { id: string }) => x.id === 'Items') || {
+            value: 0,
+          }
+        ).value
+
+        const discounts = (
+          totalizers.find((x: { id: string }) => x.id === 'Discounts') || {
+            value: 0,
+          }
+        ).value
+
+        const shippingCost = (
+          totalizers.find((x: { id: string }) => x.id === 'Shipping') || {
+            value: 0,
+          }
+        ).value
+
+        const paymentTerm = customApps
+          ? customApps[0].fields.PaymentTermDescription
+          : ''
+
+        const cart = {
+          id: null,
+          email: data.orderForm.clientProfileData.email,
+          cartName: name,
+          items: _.map(data.orderForm.items, (item: any) => {
+            return {
+              name: item.name,
+              skuName: item.skuName,
+              refId: item.productRefId,
+              id: item.id,
+              productId: item.productId,
+              imageUrl: item.imageUrl,
+              listPrice: item.listPrice,
+              price: item.price,
+              quantity: item.quantity,
+              sellingPrice: item.sellingPrice,
             }
-          } else {
+          }),
+          creationDate: new Date().toISOString(),
+          subtotal,
+          discounts,
+          shipping: shippingCost,
+          total: value,
+          paymentTerm,
+          address,
+        }
+
+        SaveCartMutation({
+          variables: {
+            cart,
+          },
+        })
+          .then((result: any) => {
+            if (result.data.orderQuote) {
+              cart.id = result.data.orderQuote.substr(5)
+              activeLoading(false)
+              toastMessage('store/orderquote.create.success')
+              activeLoading(false)
+              if (clearCart) {
+                handleClearCart(data.orderForm.id)
+              } else {
+                setTimeout(() => {
+                  navigate({
+                    to: '/orderquote',
+                  })
+                }, 1000)
+              }
+            } else {
+              toastMessage('store/orderquote.create.error')
+              activeLoading(false)
+            }
+          })
+          .catch(() => {
             toastMessage('store/orderquote.create.error')
             activeLoading(false)
-          }
-        })
-        .catch(() => {
-          toastMessage('store/orderquote.create.error')
-          activeLoading(false)
-        })
-    } else {
-      activeLoading(false)
-      toastMessage('store/orderquote.create.error')
+          })
+      } else {
+        activeLoading(false)
+        toastMessage('store/orderquote.create.error')
+      }
     }
   }
 

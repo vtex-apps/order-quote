@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Validating if user is authenticated before allowing it to save a quotation
+- Added new error message to the translation files
+
+### Changed
+
+- Configuration section of the README file
+
 ## [0.1.1] - 2020-03-27
 
 ### Added
