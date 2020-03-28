@@ -44,5 +44,6 @@
   "store/orderquote.delete.confirmation.no": "NO",
   "store/orderquote.placeholder.quotationName": "Quotation name",
   "store/orderquote.create.placeholder.quotationName": "Quotation name",
-  "store/orderquote.create.label.quotationName": "Name"
+  "store/orderquote.create.label.quotationName": "Name",
+  "store/orderquote.error.notAuthenticated": "User not authenticated"
 }
