@@ -414,14 +414,14 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 </span>
                 : {formatDate(expires)}
               </div>
-              {!!quoteList.paymentTerm && (
+              {/* {!!quoteList.customData && (
                 <div className={`mb4 ${handles.field}`}>
                   <span className="b">
-                    <FormattedMessage id="store/orderquote.view.label.paymentTerm" />
+                    <FormattedMessage id="store/orderquote.view.label.customFields" />
                   </span>
-                  : {quoteList.paymentTerm}
+                  : {quoteList.customData}
                 </div>
-              )}
+              )} */}
               {!!quoteList.address && (
                 <div>
                   <div className="mb2 mt5 b">

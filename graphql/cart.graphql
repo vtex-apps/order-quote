@@ -5,10 +5,10 @@ input CartItem {
   id: String
   productId: String
   imageUrl: String
-  listPrice: Int
-  price: Int
+  listPrice: Float
+  price: Float
   quantity: Int
-  sellingPrice: Int
+  sellingPrice: Float
 }
 
 input Cart {
@@ -20,8 +20,8 @@ input Cart {
   subtotal: Int
   discounts: Int
   shipping: Int
-  total: Int
-  paymentTerm: String
+  total: Float
+  customData: CustomDataInput
   address: Address
 }
 
@@ -34,9 +34,29 @@ type CartResponse {
   subtotal: Int
   discounts: Int
   shipping: Int
-  total: Int
-  paymentTerm: String
+  total: Float
+  customData: CustomData
   address: AddressResponse
+}
+
+input CustomDataInput {
+  customApps: [CustomAppInput]
+}
+type CustomData {
+  customApps: [CustomApp]
+}
+
+scalar CustomFields
+type CustomApp {
+  fields: CustomFields
+  id: String
+  major: Int
+}
+
+input CustomAppInput {
+  fields: CustomFields
+  id: String
+  major: Int
 }
 
 type CartResponseItem {
@@ -46,10 +66,10 @@ type CartResponseItem {
   refId: String
   productId: String
   imageUrl: String
-  listPrice: Int
-  price: Int
+  listPrice: Float
+  price: Float
   quantity: Int
-  sellingPrice: Int
+  sellingPrice: Float
 }
 
 input CartUseInfo {
