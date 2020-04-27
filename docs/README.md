@@ -10,18 +10,6 @@ This app provides **B2B** capabilities to save a Cart (Items, Quantities and Pri
 
 Install this app by running `vtex install vtex.orderquote`, after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
 
-**Warning:** This APP enables manual price editing at the Cart Page, make sure to block this via Javascript at the Cart Page(`checkout6-custom.js`), bellow a example on how to do this.
-```javascript
-var lookForTheElements = setInterval(function() {
-  var removeManual = document.querySelectorAll('.manualprice-link-remove')
-  if(removeManual) {
-    clearInterval(lookForTheElements)
-    $(removeManual).remove()
-    $('.new-product-price').off()
-  }
-}, 500)
-```
-
 ## What now?
 
 This app will generate a few routes under the `/orderquote` path.
