@@ -9,7 +9,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID || ''
 }
 
-const SCHEMA_VERSION = 'v6.1'
+const SCHEMA_VERSION = 'v6.3'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -38,6 +38,8 @@ const routes = {
     `${routes.orderForm(account)}/${id}/items/removeAll`,
   addToCart: (account: string, orderFormId: string) =>
     `${routes.orderForm(account)}/${orderFormId}/items/`,
+  addCustomData: (account: string, orderFormId: string, appId: string) =>
+    `${routes.orderForm(account)}/${orderFormId}/customData/${appId}`,
   addPriceToItems: (account: string, orderFormId: string) =>
     `${routes.orderForm(account)}/${orderFormId}/items/update`,
   vtexid: (token: string) =>
@@ -83,7 +85,7 @@ const schema = {
       title: 'Custom Data',
     },
     total: {
-      type: ['number','integer'],
+      type: ['number', 'integer'],
       title: 'Total',
     },
   },
@@ -112,9 +114,6 @@ export const resolvers = {
       const app: string = getAppId()
       const settings = await apps.getAppSettings(app)
       if (settings.adminSetup) {
-        console.log('conditional => ', !settings.adminSetup.hasSchema, settings.adminSetup.schemaVersion !== SCHEMA_VERSION, !settings.adminSetup.hasSchema ||
-        settings.adminSetup.schemaVersion !== SCHEMA_VERSION)
-        console.log('adminSetup => ', settings.adminSetup)
         if (
           !settings.adminSetup.hasSchema ||
           settings.adminSetup.schemaVersion !== SCHEMA_VERSION
@@ -274,7 +273,6 @@ export const resolvers = {
           )
         )
 
-        // if (params.userType === 'callCenterOperator' || params.userType === 'CALL_CENTER_OPERATOR') {
         const orderItems: any[] = []
         itemsAdded.forEach((item: any, key: number) => {
           orderItems.push({
@@ -292,7 +290,20 @@ export const resolvers = {
           },
           headers: useHeaders,
         })
-        // }
+
+        if (params.customData && params.customData.customApps.length) {
+          console.log('CustomData =>', params.customData)
+          await Promise.all(
+            params.customData.customApps.map((app: { id: string, fields: any }) => http({
+                url: routes.addCustomData(account, params.orderFormId, app.id),
+                method: 'put',
+                data: app.fields,
+                headers: useHeaders,
+              })
+            )
+          )
+        }
+
       } catch (e) {
         const { status, body, details } = errorResponse(e)
         console.log('CartUseError', 'error', {
@@ -328,6 +339,7 @@ export const resolvers = {
         })
         console.log('CartSaveSuccess', 'info', {
           cart: params.cart,
+          items: params.cart.items,
           cartId: data.Id,
         })
         return data.Id

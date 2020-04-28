@@ -58,7 +58,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }
 
   if (GetSetupConfig?.getSetupConfig) {
-    console.log('GetSetupConfig', GetSetupConfig)
     const {
       getSetupConfig: { adminSetup },
     } = GetSetupConfig
@@ -225,17 +224,17 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               id: item.id,
               productId: item.productId,
               imageUrl: item.imageUrl,
-              listPrice: item.listPrice,
-              price: item.price,
+              listPrice: parseInt(String(item.listPrice * 100), 0),
+              price: parseInt(String(item.price * 100), 0),
               quantity: item.quantity,
-              sellingPrice: item.sellingPrice,
+              sellingPrice: parseInt(String(item.sellingPrice * 100), 0),
             }
           }),
           creationDate: new Date().toISOString(),
-          subtotal,
-          discounts,
-          shipping: shippingCost,
-          total: value,
+          subtotal: parseInt(String(subtotal * 100), 0),
+          discounts: parseInt(String(discounts * 100), 0),
+          shipping: parseInt(String(shippingCost * 100), 0),
+          total: parseInt(String(value * 100), 0),
           customData: encodeCustomData(customData),
           address,
         }

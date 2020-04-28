@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -20,7 +21,6 @@ import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 
 import PrintButton from './PrintButton'
-
 import getCart from './graphql/getCart.graphql'
 import getSetupConfig from './graphql/getSetupConfig.graphql'
 import removeCart from './graphql/removeCart.graphql'
@@ -153,6 +153,21 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     })
   }
 
+  const parseCustomData = (cd: any) => {
+    if (cd?.customApps) {
+      return {
+        customApps: cd.customApps.map(({ id, major, fields }: any) => {
+          return {
+            id,
+            major,
+            fields: JSON.parse(fields),
+          }
+        }),
+      }
+    }
+    return null
+  }
+
   const handleUseCart = () => {
     setState({
       ..._state,
@@ -162,6 +177,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     const variables = {
       orderFormId: orderFormData?.orderForm.id,
       userType: orderFormData?.orderForm.userType,
+      customData: parseCustomData(quoteList.customData),
       items: quoteList.items.map(({ id, quantity, sellingPrice }: any) => {
         return {
           id,
@@ -170,6 +186,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }
       }),
     }
+
+    console.log('VARIABLES => ', variables)
 
     UseCart({
       variables,
@@ -187,10 +205,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
     }).then((res: any) => {
       if (res?.data?.getCart) {
-        const {
-          getSetupConfig: { adminSetup },
-        } = GetSetupConfig
-
         // eslint-disable-next-line prefer-destructuring
         const {
           subtotal,
@@ -200,7 +214,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           creationDate,
         } = res.data.getCart[0]
         const exp = new Date(creationDate)
-        const { cartLifeSpan, storeLogoUrl } = adminSetup || DEFAULT_ADMIN_SETUP
+        const { cartLifeSpan, storeLogoUrl } =
+          GetSetupConfig?.getSetupConfig?.adminSetup || DEFAULT_ADMIN_SETUP
         // eslint-disable-next-line radix
         exp.setDate(exp.getDate() + parseInt(cartLifeSpan))
 
@@ -326,7 +341,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   return (
     <div className={`${handles.containerView}`}>
-      <div className={`noPrinting`}>
+      <div className="noPrinting">
         <PageHeader
           title={translateMessage({
             id: 'store/orderquote.view.title',

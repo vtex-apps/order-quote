@@ -9,7 +9,11 @@ type Mutation {
   getCart(id: String): [CartResponse] @cacheControl(scope: PRIVATE)
   removeCart(id: String, expired: Boolean): Boolean!
     @cacheControl(scope: PRIVATE)
-  useCart(orderFormId: String, items: [CartUseInfo], userType: String): String
-    @cacheControl(scope: PRIVATE)
+  useCart(
+    orderFormId: String
+    items: [CartUseInfo]
+    userType: String
+    customData: CustomDataInput
+  ): String @cacheControl(scope: PRIVATE)
   clearCart(orderFormId: String): String @cacheControl(scope: PRIVATE)
 }

@@ -1,3 +1,13 @@
-mutation useCartMutation($orderFormId: String, $items: [CartUseInfo], $userType: String) {
-    useCart(orderFormId: $orderFormId, items: $items, userType: $userType)
+mutation useCartMutation(
+  $orderFormId: String
+  $items: [CartUseInfo]
+  $customData: CustomDataInput
+  $userType: String
+) {
+  useCart(
+    orderFormId: $orderFormId
+    items: $items
+    customData: $customData
+    userType: $userType
+  )
 }

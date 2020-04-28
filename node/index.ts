@@ -93,7 +93,7 @@ export default new Service<Clients, State>({
     useCart: async (ctx: any) => {
       setDefaultHeaders(ctx)
       try {
-        const { items, userType } = await json(ctx.req)
+        const { items, userType, customData } = await json(ctx.req)
         const { orderFormId } = ctx.vtex.route.params
 
         ctx.body = await resolvers.Mutation.useCart(
@@ -102,6 +102,7 @@ export default new Service<Clients, State>({
             items,
             userType,
             orderFormId,
+            customData,
           },
           ctx
         )
