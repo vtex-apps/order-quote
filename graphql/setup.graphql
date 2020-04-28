@@ -4,4 +4,6 @@ type GetSetupConfigResponse {
 type AdminSetupResponse {
   cartLifeSpan: Int
   storeLogoUrl: String
+  hasSchema: Boolean
+  allowManualPrice: Boolean
 }

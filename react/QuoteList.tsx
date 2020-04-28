@@ -1,19 +1,19 @@
-/* eslint-disable no-console */
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
-import { Table, Button, PageHeader, ToastContext } from 'vtex.styleguide'
+import { Table, Button, PageHeader } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
 import getCarts from './graphql/getCarts.graphql'
-import { compose, graphql, useQuery } from 'react-apollo'
+import { compose, graphql } from 'react-apollo'
 import PropTypes from 'prop-types'
 import { useRuntime } from 'vtex.render-runtime'
-import OrderFormQuery from 'vtex.checkout-resources/QueryOrderForm'
-import { OrderForm } from 'vtex.checkout-graphql'
+
+import getOrderForm from './queries/orderForm.gql'
 
 let initialLoad = true
 
 const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
+  data: { orderForm },
   GetCarts,
   intl,
 }: any) => {
@@ -22,36 +22,19 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     loading: true,
   })
   const { quoteList, loading } = _state
-  const { navigate } = useRuntime()
 
-  const { data: dataOrderForm, error: errorOrderForm } = useQuery<{
-    orderForm: OrderForm
-  }>(OrderFormQuery, {
-    ssr: false,
-  })
+  const { navigate } = useRuntime()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
   }
 
-  const { showToast } = useContext(ToastContext)
-
-  const toastMessage = (messsageKey: string) => {
-    const message = translateMessage({
-      id: messsageKey,
-    })
-
-    const action = undefined
-
-    showToast({ message, action })
-  }
-
   const getQuoteList = () => {
     initialLoad = false
-    if (dataOrderForm?.orderForm?.clientProfileData?.email) {
+    if (orderForm?.clientProfileData?.email) {
       GetCarts({
         variables: {
-          email: dataOrderForm.orderForm.clientProfileData.email,
+          email: orderForm.clientProfileData.email,
         },
       }).then((res: any) => {
         if (res?.data?.getCarts.length) {
@@ -67,16 +50,10 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           })
         }
       })
-    } else {
-      toastMessage('store/orderquote.error.notAuthenticated')
     }
   }
 
-  if (errorOrderForm) {
-    toastMessage('store/orderquote.error.notAuthenticated')
-  }
-
-  if (dataOrderForm) {
+  if (orderForm) {
     if (initialLoad || (quoteList.length === 0 && loading === true)) {
       getQuoteList()
     }
@@ -149,8 +126,8 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const CSS_HANDLES = [
     'containerList',
     'createButton',
-    'inputCreate',
     'listContainer',
+    'notAuthenticatedMessage',
   ] as const
   const handles = useCssHandles(CSS_HANDLES)
 
@@ -176,21 +153,30 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       </PageHeader>
 
       <div className="flex flex-row ph5 ph7-ns">
-        <div className={`${handles.inputCreate} mb5 flex flex-column w-100`}>
-          <div className={`mb5 ${handles.listContainer}`}>
-            <Table
-              fullWidth
-              schema={defaultSchema}
-              items={quoteList}
-              density="high"
-              loading={loading}
-              onRowClick={({ rowData }: any) => {
-                navigate({
-                  to: `/orderquote/view/${rowData.id}`,
-                })
-              }}
-            />
-          </div>
+        <div className={`mb5 flex flex-column w-100`}>
+          {orderForm &&
+            (!orderForm.clientProfileData ||
+              !orderForm.clientProfileData.email) && (
+              <div className={`mb5 ${handles.notAuthenticatedMessage}`}>
+                <FormattedMessage id="store/orderquote.error.notAuthenticated" />
+              </div>
+            )}
+          {orderForm?.clientProfileData?.email && (
+            <div className={`mb5 ${handles.listContainer}`}>
+              <Table
+                fullWidth
+                schema={defaultSchema}
+                items={quoteList}
+                density="high"
+                loading={loading}
+                onRowClick={({ rowData }: any) => {
+                  navigate({
+                    to: `/orderquote/view/${rowData.id}`,
+                  })
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -199,6 +185,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
 QuoteList.propTypes = {
   GetCarts: PropTypes.func,
+  data: PropTypes.object,
 }
 
 interface MessageDescriptor {
@@ -209,6 +196,9 @@ interface MessageDescriptor {
 
 export default injectIntl(
   compose(
+    graphql(getOrderForm, {
+      options: { ssr: false },
+    }),
     graphql(getCarts, {
       name: 'GetCarts',
       options: { ssr: false },

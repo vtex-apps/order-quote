@@ -1,0 +1,13 @@
+query {
+  getSession @context(provider: "vtex.store-graphql") {
+    impersonable
+    impersonate {
+      profile {
+        email
+      }
+    }
+    profile {
+      email
+    }
+  }
+}

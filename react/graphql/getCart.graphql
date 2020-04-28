@@ -20,7 +20,13 @@ mutation getCart($id: String) @context(scope: "private") {
     discounts
     shipping
     total
-    paymentTerm
+    customData {
+      customApps {
+        fields
+        id
+        major
+      }
+    }
     address {
       city
       complement

@@ -9,11 +9,15 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID || ''
 }
 
+const SCHEMA_VERSION = 'v6.3'
+
 const routes = {
   baseUrl: (account: string) =>
     `http://${account}.vtexcommercestable.com.br/api`,
   orderForm: (account: string) =>
     `${routes.baseUrl(account)}/checkout/pub/orderForm`,
+  checkoutConfig: (account: string) =>
+    `${routes.baseUrl(account)}/checkout/pvt/configuration/orderForm`,
   cartEntity: (account: string) =>
     `${routes.baseUrl(account)}/dataentities/cart`,
   cartDocuments: (account: string) => `${routes.cartEntity(account)}/documents`,
@@ -21,26 +25,25 @@ const routes = {
   listCarts: (account: string, email: string) =>
     `${routes.cartEntity(
       account
-    )}/search?email=${email}&_schema=v5&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,paymentTerm,address`,
+    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
   getCart: (account: string, id: string) =>
     `${routes.cartEntity(
       account
-    )}/search?id=${id}&_schema=v5&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,paymentTerm,address`,
+    )}/search?id=${id}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
   removeCart: (account: string, id: string) =>
     `${routes.cartDocuments(account)}/${id}`,
-  saveSchema: (account: string) => `${routes.cartEntity(account)}/schemas/v5`,
+  saveSchema: (account: string) =>
+    `${routes.cartEntity(account)}/schemas/${SCHEMA_VERSION}`,
   clearCart: (account: string, id: string) =>
     `${routes.orderForm(account)}/${id}/items/removeAll`,
   addToCart: (account: string, orderFormId: string) =>
     `${routes.orderForm(account)}/${orderFormId}/items/`,
+  addCustomData: (account: string, orderFormId: string, appId: string) =>
+    `${routes.orderForm(account)}/${orderFormId}/customData/${appId}`,
   addPriceToItems: (account: string, orderFormId: string) =>
     `${routes.orderForm(account)}/${orderFormId}/items/update`,
   vtexid: (token: string) =>
     `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${token}`,
-  getUserName: (account: string, userEmail: string) =>
-    `${routes.baseUrl(
-      account
-    )}/dataentities/RP/search?_fields=Name&_where=Email=${userEmail}`,
 }
 
 const schema = {
@@ -77,8 +80,12 @@ const schema = {
       type: 'integer',
       title: 'Shipping',
     },
+    customData: {
+      type: ['null', 'object'],
+      title: 'Custom Data',
+    },
     total: {
-      type: 'integer',
+      type: ['number', 'integer'],
       title: 'Total',
     },
   },
@@ -101,30 +108,74 @@ export const resolvers = {
       const {
         vtex: { account, authToken },
       } = ctx
+
+      // console.log('VTEX APP CONTEXT =>', ctx)
       const apps = new Apps(ctx.vtex)
       const app: string = getAppId()
       const settings = await apps.getAppSettings(app)
-      if (settings.adminSetup && !settings.adminSetup.hasSchema) {
-        try {
+      if (settings.adminSetup) {
+        if (
+          !settings.adminSetup.hasSchema ||
+          settings.adminSetup.schemaVersion !== SCHEMA_VERSION
+        ) {
           console.log('Starting to put schema in MD')
-          const url = routes.saveSchema(account)
-          const headers = defaultHeaders(authToken)
-          await http({
-            method: 'PUT',
-            url,
-            data: schema,
-            headers,
-            validateStatus: status =>
-              (status >= 200 && status < 300) || status === 304,
-          })
-          console.log('Schema saved successfully. Updating app settings')
-          settings.adminSetup.hasSchema = true
-          await apps.saveAppSettings(app, settings)
-        } catch (e) {
-          console.log('PutSchemaResponseError: ', e)
-          settings.adminSetup.hasSchema = false
-          await apps.saveAppSettings(app, settings)
+          try {
+            const url = routes.saveSchema(account)
+            const headers = defaultHeaders(authToken)
+            await http({
+              method: 'PUT',
+              url,
+              data: schema,
+              headers,
+              validateStatus: status =>
+                (status >= 200 && status < 300) || status === 304,
+            })
+            console.log('Schema saved successfully. Updating app settings')
+            settings.adminSetup.hasSchema = true
+            settings.adminSetup.schemaVersion = SCHEMA_VERSION
+          } catch (e) {
+            console.log('PutSchemaResponseError: ', e)
+            settings.adminSetup.hasSchema = false
+          }
         }
+        if (!settings.adminSetup.allowManualPrice) {
+          try {
+            settings.adminSetup.allowManualPrice = true
+            const url = routes.checkoutConfig(account)
+            const headers = defaultHeaders(authToken)
+            const { data: checkoutConfig } = await http({
+              method: 'GET',
+              url,
+              data: schema,
+              headers,
+              validateStatus: status =>
+                (status >= 200 && status < 300) || status === 304,
+            })
+            if (checkoutConfig.allowManualPrice !== true) {
+              console.log('Start saving config', {
+                ...checkoutConfig,
+                allowManualPrice: true,
+              })
+              await http({
+                method: 'post',
+                url,
+                data: JSON.stringify({
+                  ...checkoutConfig,
+                  allowManualPrice: true,
+                }),
+                headers,
+              })
+              console.log('Ended saving config')
+            }
+            console.log(
+              'Checkout config saved successfully. Updating app settings'
+            )
+          } catch (e) {
+            console.log('Error saving checkout config', e)
+            settings.adminSetup.allowManualPrice = false
+          }
+        }
+        await apps.saveAppSettings(app, settings)
       }
       console.log('Settings', settings)
       return settings
@@ -222,25 +273,37 @@ export const resolvers = {
           )
         )
 
-        if (params.userType === 'callCenterOperator' || params.userType === 'CALL_CENTER_OPERATOR') {
-          const orderItems: any[] = []
-          itemsAdded.forEach((item: any, key: number) => {
-            orderItems.push({
-              index: key,
-              quantity: null,
-              price: prop(item.id, sellingPriceMap).price,
-            })
+        const orderItems: any[] = []
+        itemsAdded.forEach((item: any, key: number) => {
+          orderItems.push({
+            index: key,
+            quantity: null,
+            price: prop(item.id, sellingPriceMap).price,
           })
+        })
 
-          await http({
-            url: routes.addPriceToItems(account, params.orderFormId),
-            method: 'post',
-            data: {
-              orderItems,
-            },
-            headers: useHeaders,
-          })
+        await http({
+          url: routes.addPriceToItems(account, params.orderFormId),
+          method: 'post',
+          data: {
+            orderItems,
+          },
+          headers: useHeaders,
+        })
+
+        if (params.customData && params.customData.customApps.length) {
+          console.log('CustomData =>', params.customData)
+          await Promise.all(
+            params.customData.customApps.map((app: { id: string, fields: any }) => http({
+                url: routes.addCustomData(account, params.orderFormId, app.id),
+                method: 'put',
+                data: app.fields,
+                headers: useHeaders,
+              })
+            )
+          )
         }
+
       } catch (e) {
         const { status, body, details } = errorResponse(e)
         console.log('CartUseError', 'error', {
@@ -276,6 +339,7 @@ export const resolvers = {
         })
         console.log('CartSaveSuccess', 'info', {
           cart: params.cart,
+          items: params.cart.items,
           cartId: data.Id,
         })
         return data.Id

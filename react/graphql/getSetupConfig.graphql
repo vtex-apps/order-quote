@@ -3,6 +3,8 @@ query getSetupConfig {
     adminSetup {
       cartLifeSpan
       storeLogoUrl
+      hasSchema
+      allowManualPrice
     }
   }
 }
