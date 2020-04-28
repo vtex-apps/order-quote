@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Save/Recover CustomData configuration
+- Save/Recover CustomData values from the order
 
 ### Removed
 
