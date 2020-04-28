@@ -187,8 +187,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       }),
     }
 
-    console.log('VARIABLES => ', variables)
-
     UseCart({
       variables,
     }).then(() => {
