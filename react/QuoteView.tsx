@@ -217,6 +217,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line radix
         exp.setDate(exp.getDate() + parseInt(cartLifeSpan))
 
+        const newSubtotal = subtotal > 0 ? subtotal / 100 : subtotal
+        const newShipping = shipping > 0 ? shipping / 100 : shipping
         setState({
           ..._state,
           expires: exp,
@@ -227,28 +229,42 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               label: translateMessage({
                 id: 'store/orderquote.summary.subtotal',
               }),
-              value: <FormattedCurrency value={subtotal} />,
+              value: (
+                <FormattedCurrency
+                  value={newSubtotal > 0 ? newSubtotal / 100 : newSubtotal}
+                />
+              ),
               isLoading: false,
             },
             {
               label: translateMessage({
                 id: 'store/orderquote.summary.shipping',
               }),
-              value: <FormattedCurrency value={shipping} />,
+              value: (
+                <FormattedCurrency
+                  value={newShipping > 0 ? newShipping / 100 : newShipping}
+                />
+              ),
               isLoading: false,
             },
             {
               label: translateMessage({
                 id: 'store/orderquote.summary.discounts',
               }),
-              value: <FormattedCurrency value={discounts} />,
+              value: (
+                <FormattedCurrency
+                  value={discounts > 0 ? discounts / 100 : discounts}
+                />
+              ),
               isLoading: false,
             },
             {
               label: translateMessage({
                 id: 'store/orderquote.summary.total',
               }),
-              value: <FormattedCurrency value={total} />,
+              value: (
+                <FormattedCurrency value={total > 0 ? total / 100 : total} />
+              ),
               isLoading: false,
             },
           ],
@@ -283,7 +299,9 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ cellData }: any) => {
           return (
             <span className="tr w-100">
-              <FormattedCurrency value={cellData} />
+              <FormattedCurrency
+                value={cellData > 0 ? cellData / 100 : cellData}
+              />
             </span>
           )
         },
@@ -301,10 +319,11 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
+          const itemTotal = rowData.sellingPrice * rowData.quantity
           return (
             <span className="tr w-100">
               <FormattedCurrency
-                value={rowData.sellingPrice * rowData.quantity}
+                value={itemTotal > 0 ? itemTotal / 100 : itemTotal}
               />
             </span>
           )

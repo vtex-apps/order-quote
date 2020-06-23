@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState } from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
@@ -73,7 +74,9 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ cellData }: any) => {
           return (
             <span className="tr w-100">
-              <FormattedCurrency value={cellData} />
+              <FormattedCurrency
+                value={cellData > 0 ? cellData / 100 : cellData}
+              />
             </span>
           )
         },
@@ -84,9 +87,12 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
+          const newCellData = cellData > 0 ? cellData / 100 : cellData
           return (
             <span className="tr w-100">
-              <FormattedCurrency value={cellData} />
+              <FormattedCurrency
+                value={newCellData > 0 ? newCellData / 100 : newCellData}
+              />
             </span>
           )
         },
@@ -99,7 +105,9 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ cellData }: any) => {
           return (
             <span className="tr w-100">
-              <FormattedCurrency value={cellData} />
+              <FormattedCurrency
+                value={cellData > 0 ? cellData / 100 : cellData}
+              />
             </span>
           )
         },
