@@ -26,9 +26,7 @@
     "vtex.css-handles": "0.x",
     "vtex.format-currency": "0.x"
   },
-  "registries": [
-    "smartcheckout"
-  ],
+  "registries": ["smartcheckout"],
   "policies": [
     {
       "name": "read-workspace-apps"
@@ -92,30 +90,26 @@
             "type": "string"
           }
         },
-        "required": [
-          "cartLifeSpan",
-          "storeLogoUrl"
-        ]
+        "required": ["cartLifeSpan", "storeLogoUrl"]
       }
     },
-    "required": [
-      "adminSetup"
-    ]
+    "required": ["adminSetup"]
   },
   "settingsUiSchema": {
-    "ui:order": [
-      "adminSetup",
-      "hasSchema"
-    ],
+    "ui:order": ["adminSetup", "hasSchema"],
     "adminSetup": {
-      "ui:order": [
-        "cartLifeSpan",
-        "storeLogoUrl"
-      ]
+      "ui:order": ["cartLifeSpan", "storeLogoUrl"]
     },
     "hasSchema": {
       "ui:widget": "hidden"
     }
+  },
+  "billingOptions": {
+    "termsURL": "https://compliance.vtex.com/gdpr/policies/vtex-privacy-policy",
+    "support": {
+      "url": "https://support.vtex.com/hc/requests"
+    },
+    "free": true
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
