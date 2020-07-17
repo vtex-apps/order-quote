@@ -18,7 +18,7 @@ After installing the app in your account, add it as a `peerDependency` in your `
 
 ```diff
 +"peerDependencies": {
-+  "vtex.quickorder": "3.x"
++  "vtex.orderquote": "1.x"
 +}
 ```
 
