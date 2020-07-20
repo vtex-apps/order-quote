@@ -12,13 +12,13 @@ This app provides **B2B** capabilities to save and print a user's minicart data 
 
 ## Configuration
 
-1. [Install](https://vtex.io/docs/recipes/development/installing-an-app/) the Order Quote app by running `vtex install vtex.orderquote@0.x`.
+1. [Install](https://vtex.io/docs/recipes/development/installing-an-app/) the Order Quote app by running `vtex install vtex.orderquote@1.x`.
 2. Open your store's Store Theme app directory in your code editor.
 3. Add the Order Quote app as a `peerDependency` in the `manifest.json` file:
 
 ```diff
  "peerDependencies": {
-+  "vtex.orderquote": "0.x"
++  "vtex.orderquote": "1.x"
  }
 ```
 
