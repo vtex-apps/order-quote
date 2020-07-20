@@ -1,6 +1,6 @@
 {
   "name": "orderquote",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "scripts": {
     "test": "vtex-test-tools test"
   },
