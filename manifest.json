@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "orderquote",
-  "version": "2.0.0",
+  "version": "0.2.3",
   "title": "Order Quote",
   "description": "B2B functionality that enables you to save items from the cart with their current prices for further use",
   "builders": {
@@ -26,9 +26,7 @@
     "vtex.css-handles": "0.x",
     "vtex.format-currency": "0.x"
   },
-  "registries": [
-    "smartcheckout"
-  ],
+  "registries": ["smartcheckout"],
   "policies": [
     {
       "name": "read-workspace-apps"
@@ -92,26 +90,15 @@
             "type": "string"
           }
         },
-        "required": [
-          "cartLifeSpan",
-          "storeLogoUrl"
-        ]
+        "required": ["cartLifeSpan", "storeLogoUrl"]
       }
     },
-    "required": [
-      "adminSetup"
-    ]
+    "required": ["adminSetup"]
   },
   "settingsUiSchema": {
-    "ui:order": [
-      "adminSetup",
-      "hasSchema"
-    ],
+    "ui:order": ["adminSetup", "hasSchema"],
     "adminSetup": {
-      "ui:order": [
-        "cartLifeSpan",
-        "storeLogoUrl"
-      ]
+      "ui:order": ["cartLifeSpan", "storeLogoUrl"]
     },
     "hasSchema": {
       "ui:widget": "hidden"
