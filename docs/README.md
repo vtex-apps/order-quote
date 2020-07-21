@@ -8,7 +8,19 @@ This app provides **B2B** capabilities to save a Cart (Items, Quantities and Pri
 
 ## Configuration
 
-Install this app by running `vtex install vtex.orderquote`, after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
+### Environment instalation
+
+Install this app by running `vtex install vtex.orderquote` on the [vtex toolbelt](https://vtex.io/docs/concepts/toolbelt/), after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
+
+### Store Theme: Dependencies
+
+After installing the app in your account, add it as a `peerDependency` in your `store-theme`:
+
+```diff
++"peerDependencies": {
++  "vtex.orderquote": "1.x"
++}
+```
 
 ## What now?
 

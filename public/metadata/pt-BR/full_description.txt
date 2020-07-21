@@ -1,0 +1,9 @@
+## Sobre
+
+Este app ativa a função de orçamentos para o segmento B2B, que permite salvar seu carrinho (produtos, quantidades e valores) para uso posterior, o usuário pode imprimir este orçamento contendo todos os detalhes, assim como a data de validade.
+
+## Configuração
+
+Instale este app à partir da VTEX APP Store, depois disso, navegue até `/admin/apps`, selecione **Orçamentos**, na aba de Configurações, defina o tempo de vida desse orçamento (**Lifespan**), URL para uma imagem do logotipo de sua empresa (**Store logo URL**), clique em **Salvar**
+
+Este app vai criar uma nova página em `/orderquote`.

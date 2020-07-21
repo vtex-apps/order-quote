@@ -1,0 +1,9 @@
+## About
+
+This app provides **B2B** capabilities to save a Cart (Items, Quantities and Price) for further use, the user can also Print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
+
+## Configuration
+
+Install this app from the VTEX APP Store, after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
+
+This app will generate a few routes under the `/orderquote` path.
