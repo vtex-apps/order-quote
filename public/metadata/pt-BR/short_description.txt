@@ -1,1 +1,1 @@
-Adiciona uma funcionalidade para lojas B2B, permitindo salvar orçamentos com seus valores para uso posterior
+Adiciona uma funcionalidade para lojas B2B, permitindo salvar orçamentos com seus valores para uso posterior.

@@ -1,0 +1,12 @@
+## Sobre
+
+Esta aplicación activa la función de presupuestación para el segmento B2B, que permite guardar el carro (productos, cantidades y valores) para su uso posterior. El usuario puede imprimir este presupuesto que contiene todos los detalles así como la fecha de validez.
+
+## Configuración
+
+1. Instale esta aplicación desde VTEX APP Store;
+2. Selecciona **Presupuestos**, en la pestaña de Configuración de la aplicación;
+3. Defina la duración del presupuesto (**Lifespan**) y la URL para una imagen del logo de su empresa (**Lifespan URL**);
+4. Haga clic en **Save**.
+
+Esta aplicación creará una nueva página en `/Ordenación`.
