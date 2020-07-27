@@ -345,6 +345,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'containerView',
     'buttonDelete',
     'buttonPrint',
+    'buttonContainerView',
     'buttonUse',
     'printingArea',
     'containerFields',

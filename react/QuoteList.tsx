@@ -4,11 +4,11 @@ import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { Table, Button, PageHeader } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
-import getCarts from './graphql/getCarts.graphql'
 import { compose, graphql } from 'react-apollo'
 import PropTypes from 'prop-types'
 import { useRuntime } from 'vtex.render-runtime'
 
+import getCarts from './graphql/getCarts.graphql'
 import getOrderForm from './queries/orderForm.gql'
 
 let initialLoad = true
@@ -32,12 +32,14 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const getQuoteList = () => {
     initialLoad = false
+    console.log('getQuoteList', orderForm.clientProfileData)
     if (orderForm?.clientProfileData?.email) {
       GetCarts({
         variables: {
           email: orderForm.clientProfileData.email,
         },
       }).then((res: any) => {
+        console.log('getQuoteList RES =>', res?.data)
         if (res?.data?.getCarts.length) {
           setState({
             ..._state,
@@ -53,6 +55,8 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       })
     }
   }
+
+  console.log('QuoteList orderForm ==>', orderForm)
 
   if (orderForm) {
     if (initialLoad || (quoteList.length === 0 && loading === true)) {
@@ -161,7 +165,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       </PageHeader>
 
       <div className="flex flex-row ph5 ph7-ns">
-        <div className={`mb5 flex flex-column w-100`}>
+        <div className="mb5 flex flex-column w-100">
           {orderForm &&
             (!orderForm.clientProfileData ||
               !orderForm.clientProfileData.email) && (

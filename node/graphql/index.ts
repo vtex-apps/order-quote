@@ -1,12 +1,11 @@
-import { Apps } from '@vtex/api'
-import http from 'axios'
-import { decode } from 'jsonwebtoken'
 import { indexBy, map, prop } from 'ramda'
-import { errorResponse } from '../utils/error'
+import { json } from 'co-body'
+import { Apps } from '@vtex/api'
+
 import GraphQLError from '../utils/GraphQLError'
 
 const getAppId = (): string => {
-  return process.env.VTEX_APP_ID || ''
+  return process.env.VTEX_APP_ID ?? ''
 }
 
 const SCHEMA_VERSION = 'v6.3'
@@ -101,83 +100,132 @@ const defaultHeaders = (authToken: string) => ({
   'Proxy-Authorization': authToken,
 })
 
+const setDefaultHeaders = (ctx: any) => {
+  ctx.set('Access-Control-Allow-Origin', '*')
+  ctx.set('Access-Control-Allow-Methods', 'POST, GET, DELETE, OPTIONS')
+  ctx.set(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, authorization'
+  )
+  ctx.set('Cache-Control', 'no-cache')
+}
+
 export const resolvers = {
+  Routes: {
+    orderQuote: async (ctx: any) => {
+      setDefaultHeaders(ctx)
+      try {
+        ctx.body = await resolvers.Mutation.orderQuote(
+          {},
+          {
+            cart: await json(ctx.req),
+          },
+          ctx
+        )
+        ctx.status = 200
+      } catch (e) {
+        ctx.body = e
+        ctx.status = 500
+      }
+    },
+    removeCart: async (ctx: any) => {
+      setDefaultHeaders(ctx)
+      try {
+        const { expired } = await json(ctx.req)
+        const { cartId: id } = ctx.vtex.route.params
+
+        ctx.body = await resolvers.Mutation.removeCart(
+          {},
+          {
+            expired,
+            id,
+          },
+          ctx
+        )
+        ctx.status = 200
+      } catch (e) {
+        ctx.body = e
+        ctx.status = 500
+      }
+    },
+    useCart: async (ctx: any) => {
+      setDefaultHeaders(ctx)
+      try {
+        const { items, userType, customData } = await json(ctx.req)
+        const { orderFormId } = ctx.vtex.route.params
+
+        ctx.body = await resolvers.Mutation.useCart(
+          {},
+          {
+            items,
+            userType,
+            orderFormId,
+            customData,
+          },
+          ctx
+        )
+        ctx.status = 200
+      } catch (e) {
+        ctx.body = e
+        ctx.status = 500
+      }
+    },
+  },
   Query: {
     getSetupConfig: async (_: any, __: any, ctx: any) => {
-      console.log('Inside getSetupConfig')
       const {
         vtex: { account, authToken },
+        clients: { hub },
       } = ctx
 
-      // console.log('VTEX APP CONTEXT =>', ctx)
       const apps = new Apps(ctx.vtex)
       const app: string = getAppId()
       const settings = await apps.getAppSettings(app)
+
       if (settings.adminSetup) {
         if (
           !settings.adminSetup.hasSchema ||
           settings.adminSetup.schemaVersion !== SCHEMA_VERSION
         ) {
-          console.log('Starting to put schema in MD')
           try {
             const url = routes.saveSchema(account)
             const headers = defaultHeaders(authToken)
-            await http({
-              method: 'PUT',
-              url,
-              data: schema,
-              headers,
-              validateStatus: status =>
-                (status >= 200 && status < 300) || status === 304,
-            })
-            console.log('Schema saved successfully. Updating app settings')
+
+            await hub.put(url, headers, schema)
+
             settings.adminSetup.hasSchema = true
             settings.adminSetup.schemaVersion = SCHEMA_VERSION
           } catch (e) {
-            console.log('PutSchemaResponseError: ', e)
             settings.adminSetup.hasSchema = false
           }
         }
+
         if (!settings.adminSetup.allowManualPrice) {
           try {
             settings.adminSetup.allowManualPrice = true
             const url = routes.checkoutConfig(account)
             const headers = defaultHeaders(authToken)
-            const { data: checkoutConfig } = await http({
-              method: 'GET',
-              url,
-              data: schema,
-              headers,
-              validateStatus: status =>
-                (status >= 200 && status < 300) || status === 304,
-            })
+
+            const { data: checkoutConfig } = await hub.get(url, headers, schema)
+
             if (checkoutConfig.allowManualPrice !== true) {
-              console.log('Start saving config', {
-                ...checkoutConfig,
-                allowManualPrice: true,
-              })
-              await http({
-                method: 'post',
+              await hub.post(
                 url,
-                data: JSON.stringify({
+                headers,
+                JSON.stringify({
                   ...checkoutConfig,
                   allowManualPrice: true,
-                }),
-                headers,
-              })
-              console.log('Ended saving config')
+                })
+              )
             }
-            console.log(
-              'Checkout config saved successfully. Updating app settings'
-            )
           } catch (e) {
-            console.log('Error saving checkout config', e)
             settings.adminSetup.allowManualPrice = false
           }
         }
+
         await apps.saveAppSettings(app, settings)
       }
-      console.log('Settings', settings)
+
       return settings
     },
 
@@ -187,69 +235,71 @@ export const resolvers = {
   },
   Mutation: {
     clearCart: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
       const { account, authToken } = ioContext
       const token =
         ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
         ctx.cookies.get(`VtexIdclientAutCookie`)
+
       const useHeaders = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
         VtexIdclientAutCookie: token,
         'Proxy-Authorization': authToken,
       }
+
       try {
         // CLEAR CURRENT CART
-        await http({
-          method: 'post',
-          url: routes.clearCart(account, params.orderFormId),
-          data: { expectedOrderFormSections: ['items'] },
-          headers: useHeaders,
-        })
+        await hub.post(
+          routes.clearCart(account, params.orderFormId),
+          useHeaders,
+          { expectedOrderFormSections: ['items'] }
+        )
       } catch (e) {
-        const { status, body, details } = errorResponse(e)
-        console.log('CartUseError', 'error', {
-          orderFormId: params.orderFormId,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
     },
     useCart: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
       const { account, authToken } = ioContext
       const token =
         ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
         ctx.cookies.get(`VtexIdclientAutCookie`)
+
       const useHeaders = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
         VtexIdclientAutCookie: token,
         'Proxy-Authorization': authToken,
       }
+
       try {
         // CLEAR CURRENT CART
-        await http({
-          method: 'post',
-          url: routes.clearCart(account, params.orderFormId),
-          data: { expectedOrderFormSections: ['items'] },
-          headers: useHeaders,
-        })
+        await hub.post(
+          routes.clearCart(account, params.orderFormId),
+          useHeaders,
+          { expectedOrderFormSections: ['items'] }
+        )
 
         // ADD ITEMS TO CART
         const {
           data: { items: itemsAdded },
-        } = await http({
-          url: routes.addToCart(account, params.orderFormId),
-          method: 'post',
-          data: {
+        } = await hub.post(
+          routes.addToCart(account, params.orderFormId),
+          useHeaders,
+          {
             expectedOrderFormSections: ['items'],
             orderItems: params.items.map((item: any) => {
               return {
@@ -258,9 +308,8 @@ export const resolvers = {
                 seller: '1',
               }
             }),
-          },
-          headers: useHeaders,
-        })
+          }
+        )
 
         const sellingPriceMap = indexBy(
           prop('id'),
@@ -274,6 +323,7 @@ export const resolvers = {
         )
 
         const orderItems: any[] = []
+
         itemsAdded.forEach((item: any, key: number) => {
           orderItems.push({
             index: key,
@@ -282,201 +332,136 @@ export const resolvers = {
           })
         })
 
-        await http({
-          url: routes.addPriceToItems(account, params.orderFormId),
-          method: 'post',
-          data: {
-            orderItems,
-          },
-          headers: useHeaders,
-        })
+        await hub.post(
+          routes.addPriceToItems(account, params.orderFormId),
+          useHeaders,
+          { orderItems }
+        )
 
         if (params.customData && params.customData.customApps.length) {
-          console.log('CustomData =>', params.customData)
           await Promise.all(
-            params.customData.customApps.map((app: { id: string, fields: any }) => http({
-                url: routes.addCustomData(account, params.orderFormId, app.id),
-                method: 'put',
-                data: app.fields,
-                headers: useHeaders,
-              })
+            params.customData.customApps.map(
+              (app: { id: string; fields: any }) =>
+                hub.put(
+                  routes.addCustomData(account, params.orderFormId, app.id),
+                  useHeaders,
+                  app.fields
+                )
             )
           )
         }
-
       } catch (e) {
-        const { status, body, details } = errorResponse(e)
-        console.log('CartUseError', 'error', {
-          orderFormId: params.orderFormId,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
     },
     orderQuote: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
       const { account, authToken } = ioContext
-      const token =
-        ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
-        ctx.cookies.get(`VtexIdclientAutCookie`)
-      const userDecode = decode(token)
-      const user: string = userDecode ? userDecode.sub : null
+
       const headers = defaultHeaders(authToken)
       const url = routes.orderQuote(account)
+
       try {
-        const { data } = await http({
-          method: 'post',
-          url,
-          data: params.cart,
-          headers,
-        })
-        console.log('CartSaveSuccess', 'info', {
-          cart: params.cart,
-          items: params.cart.items,
-          cartId: data.Id,
-        })
+        const { data } = await hub.post(url, headers, params.cart)
+
         return data.Id
       } catch (e) {
-        const { status, body, details } = errorResponse(e)
-        console.log('CartSaveError', 'error', {
-          cart: params.cart,
-          user,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
     },
 
     getCarts: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
       const { account, authToken } = ioContext
       const headers = {
         ...defaultHeaders(authToken),
         'REST-Range': `resources=0-100`,
       }
+
       const url = routes.listCarts(account, encodeURIComponent(params.email))
+
       try {
-        const { data } = await http({
-          method: 'get',
-          url,
-          headers,
-        })
+        const { data } = await hub.get(url, headers)
+
         return data
       } catch (e) {
-        console.log(e)
-        const { status, body, details } = errorResponse(e)
-        console.log('CartListError', 'error', {
-          user: params.email,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
     },
 
     getCart: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
       const { account, authToken } = ioContext
+
       const headers = {
         ...defaultHeaders(authToken),
         'REST-Range': `resources=0-100`,
       }
+
       const url = routes.getCart(account, encodeURIComponent(params.id))
+
       try {
-        const { data } = await http({
-          method: 'get',
-          url,
-          headers,
-        })
-        console.log('getCart', data)
+        const { data } = await hub.get(url, headers)
+
         return data
       } catch (e) {
-        console.log(e)
-        const { status, body, details } = errorResponse(e)
-        console.log('CartListError', 'error', {
-          user: params.email,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
     },
 
     removeCart: async (_: any, params: any, ctx: any) => {
-      const { vtex: ioContext } = ctx
-      const { account, authToken } = ioContext
-      const token =
-        ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
-        ctx.cookies.get(`VtexIdclientAutCookie`) ||
-        ''
       const {
-        data: { user },
-      } = await http({
-        // Check if cookie was issued by VTEX ID and is still valid
-        method: 'get',
-        url: routes.vtexid(token),
-        headers: { 'Proxy-Authorization': `${authToken}` },
-      })
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
+
+      const { account, authToken } = ioContext
+
       const headers = defaultHeaders(authToken)
       const url = routes.removeCart(account, params.id)
+
       try {
-        const result = await http({
-          method: 'delete',
-          url,
-          headers,
-        })
+        const result = await hub.delete(url, headers)
+
         if (result.status === 204) {
-          console.log('CartRemoveSuccess', 'info', {
-            cartId: params.id,
-            user,
-            expired: params.expired,
-          })
           return true
         }
       } catch (e) {
-        console.log(e)
-        const { status, body, details } = errorResponse(e)
-        console.log('CartRemoveError', 'error', {
-          cartId: params.id,
-          user,
-          expired: params.expired,
-          status,
-          body,
-          details,
-        })
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
           throw new GraphQLError(e.response.data.message)
         }
-        throw e as GraphQLError
       }
+
       return false
     },
   },

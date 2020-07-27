@@ -57,16 +57,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     showToast({ message, action })
   }
 
-  if (GetSetupConfig?.getSetupConfig) {
-    const {
-      getSetupConfig: { adminSetup },
-    } = GetSetupConfig
-
-    if (adminSetup) {
-      console.log('adminSetup', adminSetup)
-    }
-  }
-
   const defaultSchema = {
     properties: {
       productRefId: {
@@ -295,6 +285,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'checkboxClear',
     'buttonSave',
     'listContainer',
+    'notAuthenticatedMessage',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)

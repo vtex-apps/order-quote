@@ -2,23 +2,24 @@
   "name": "vtex.orderquote",
   "version": "1.0.0",
   "dependencies": {
-    "@types/co-body": "0.0.3",
-    "@vtex/api": "^3.0.0",
-    "axios": "^0.18.0",
-    "bluebird": "^3.4.7",
     "co-body": "^6.0.0",
-    "jsonwebtoken": "^8.2.0",
-    "ramda": "^0.25.0",
-    "typescript": "3.8.3"
+    "jsonwebtoken": "^8.5.0",
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
-    "@types/bluebird-global": "^3.0.1",
-    "@types/jsonwebtoken": "^8.3.8",
+    "@types/bluebird": "^3.5.25",
+    "@types/co-body": "0.0.3",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node": "^12.0.0",
     "@types/ramda": "types/npm-ramda#dist",
-    "babel-eslint": "^10.1.0",
-    "jsonwebtoken": "^8.2.0",
-    "prettier": "^1.18.2",
-    "tslint": "^5.18.0",
+    "@vtex/api": "6.35.2",
+    "@vtex/prettier-config": "^0.3.1",
+    "tslint": "^5.12.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-vtex": "^2.1.0",
     "typescript": "3.8.3"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit && tslint -c tslint.json './**/*.ts'"
   }
 }
