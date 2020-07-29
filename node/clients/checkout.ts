@@ -37,21 +37,11 @@ export default ({ clients: { hub } }: Context) => {
      * @param {any} marketingData Dados do marketing
      * @param {string} Cookie Cookie da sessão
      */
-    saveMarketingData: (
-      orderFormId: string,
-      marketingData: any,
-      cookie: string
-    ) => {
+    saveMarketingData: (orderFormId: string, marketingData: any) => {
       const url = routes.marketingData(hub.account(), orderFormId)
-      const headers = {
-        Accept: 'application/json',
-        'Proxy-Authorization': hub.authToken(),
-        'Content-Type': 'application/json',
-        Cookie: cookie,
-      }
 
       return hub
-        .post(url, headers, { ...marketingData, expectedOrderFormSections })
+        .post(url, { ...marketingData, expectedOrderFormSections })
         .then(prop('data'))
     },
     /**
@@ -60,33 +50,21 @@ export default ({ clients: { hub } }: Context) => {
      * @param orderFormId Identificador do orderForm
      * @param hook Valor do hook
      */
-    updateOrderHook: (orderFormId: string, hook: any, cookie: string) => {
+    updateOrderHook: (orderFormId: string, hook: any) => {
       const url = routes.orderFormHooks(hub.account(), orderFormId)
-      const headers = {
-        Accept: 'application/json',
-        'Proxy-Authorization': hub.authToken(),
-        'Content-Type': 'application/json',
-        Cookie: cookie,
-      }
 
-      return hub.post(url, headers, hook).then(prop('data'))
+      return hub.post(url, hook).then(prop('data'))
     },
     /**
      * Obtém o orderForm pelo identificador
      *
      * @param orderFormId Identificador do orderForm
      */
-    getOrderForm: (orderFormId: string, cookie: string): any => {
+    getOrderForm: (orderFormId: string): any => {
       const url = routes.orderFormId(hub.account(), orderFormId)
       const payload = { expectedOrderFormSections }
-      const headers = {
-        Accept: 'application/json',
-        'Proxy-Authorization': hub.authToken(),
-        'Content-Type': 'application/json',
-        Cookie: cookie,
-      }
 
-      return hub.post(url, headers, payload).then(prop('data'))
+      return hub.post(url, payload).then(prop('data'))
     },
     /**
      * Obtém um orderForm vazio
@@ -94,13 +72,8 @@ export default ({ clients: { hub } }: Context) => {
     getBlankOrderForm: (): any => {
       const url = routes.orderForm(hub.account())
       const payload = { expectedOrderFormSections }
-      const headers = {
-        Accept: 'application/json',
-        'Proxy-Authorization': hub.authToken(),
-        'Content-Type': 'application/json',
-      }
 
-      return hub.post(url, headers, payload).then(prop('data'))
+      return hub.post(url, payload).then(prop('data'))
     },
   }
 }

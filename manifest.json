@@ -16,7 +16,7 @@
     "vtex.checkout": "0.x",
     "vtex.store": "2.x",
     "vtex.styleguide": "9.x",
-    "vtex.render-runtime": "7.x",
+    "vtex.render-runtime": "8.x",
     "vtex.checkout-resources": "0.x",
     "vtex.order-manager": "0.x",
     "vtex.store-graphql": "2.x",
@@ -59,7 +59,23 @@
       }
     },
     {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com",
+        "path": "/api/*"
+      }
+    },
+    {
+      "name": "ADMIN_CRM"
+    },
+    {
+      "name": "POWER_USER_CRM"
+    },
+    {
       "name": "ADMIN_DS"
+    },
+    {
+      "name": "POWER_USER_DS"
     },
     {
       "name": "SaveOrderFormConfiguration"

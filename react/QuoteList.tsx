@@ -1,28 +1,27 @@
+/* eslint-disable vtex/prefer-early-return */
 /* eslint-disable no-console */
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { Table, Button, PageHeader } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
-import { compose, graphql } from 'react-apollo'
+import { compose, graphql, useLazyQuery } from 'react-apollo'
 import PropTypes from 'prop-types'
 import { useRuntime } from 'vtex.render-runtime'
 
-import getCarts from './graphql/getCarts.graphql'
+import getCarts from './queries/getCarts.gql'
 import getOrderForm from './queries/orderForm.gql'
 
 let initialLoad = true
 
 const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   data: { orderForm },
-  GetCarts,
   intl,
 }: any) => {
-  const [_state, setState] = useState<any>({
-    quoteList: [],
-    loading: true,
+  const [getQuoteList, { data, loading }] = useLazyQuery(getCarts, {
+    fetchPolicy: 'no-cache',
+    partialRefetch: true,
   })
-  const { quoteList, loading } = _state
 
   const { navigate } = useRuntime()
 
@@ -30,39 +29,19 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     return intl.formatMessage(message)
   }
 
-  const getQuoteList = () => {
-    initialLoad = false
-    console.log('getQuoteList', orderForm.clientProfileData)
-    if (orderForm?.clientProfileData?.email) {
-      GetCarts({
-        variables: {
-          email: orderForm.clientProfileData.email,
-        },
-      }).then((res: any) => {
-        console.log('getQuoteList RES =>', res?.data)
-        if (res?.data?.getCarts.length) {
-          setState({
-            ..._state,
-            quoteList: res.data.getCarts,
-            loading: false,
-          })
-        } else {
-          setState({
-            ..._state,
-            loading: false,
-          })
-        }
-      })
-    }
+  const fetch = () => {
+    getQuoteList({
+      variables: {
+        email: orderForm.clientProfileData.email,
+      },
+    })
   }
-
-  console.log('QuoteList orderForm ==>', orderForm)
-
-  if (orderForm) {
-    if (initialLoad || (quoteList.length === 0 && loading === true)) {
-      getQuoteList()
+  useEffect(() => {
+    if (orderForm && initialLoad) {
+      initialLoad = false
+      fetch()
     }
-  }
+  })
 
   const defaultSchema = {
     properties: {
@@ -155,8 +134,11 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             variation="primary"
             onClick={() => {
               navigate({
-                to: `/orderquote/create`,
+                page: `store.create`,
               })
+              setTimeout(() => {
+                initialLoad = true
+              }, 1000)
             }}
           >
             <FormattedMessage id="store/orderquote.button.new" />
@@ -173,12 +155,12 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 <FormattedMessage id="store/orderquote.error.notAuthenticated" />
               </div>
             )}
-          {orderForm?.clientProfileData?.email && (
+          {orderForm?.clientProfileData?.email && data && (
             <div className={`mb5 ${handles.listContainer}`}>
               <Table
                 fullWidth
                 schema={defaultSchema}
-                items={quoteList}
+                items={data.getCarts}
                 density="high"
                 loading={loading}
                 onRowClick={({ rowData }: any) => {
@@ -196,7 +178,6 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 }
 
 QuoteList.propTypes = {
-  GetCarts: PropTypes.func,
   data: PropTypes.object,
 }
 
@@ -209,10 +190,6 @@ interface MessageDescriptor {
 export default injectIntl(
   compose(
     graphql(getOrderForm, {
-      options: { ssr: false },
-    }),
-    graphql(getCarts, {
-      name: 'GetCarts',
       options: { ssr: false },
     })
   )(QuoteList)

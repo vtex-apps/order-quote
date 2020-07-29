@@ -148,7 +148,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
     }).then(() => {
       navigate({
-        to: '/orderquote',
+        page: 'store.orderquote',
       })
     })
   }

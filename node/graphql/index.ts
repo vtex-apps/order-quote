@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { indexBy, map, prop } from 'ramda'
 import { json } from 'co-body'
 import { Apps } from '@vtex/api'
@@ -189,9 +190,8 @@ export const resolvers = {
         ) {
           try {
             const url = routes.saveSchema(account)
-            const headers = defaultHeaders(authToken)
 
-            await hub.put(url, headers, schema)
+            await hub.put(url, schema)
 
             settings.adminSetup.hasSchema = true
             settings.adminSetup.schemaVersion = SCHEMA_VERSION
@@ -211,7 +211,6 @@ export const resolvers = {
             if (checkoutConfig.allowManualPrice !== true) {
               await hub.post(
                 url,
-                headers,
                 JSON.stringify({
                   ...checkoutConfig,
                   allowManualPrice: true,
@@ -228,7 +227,34 @@ export const resolvers = {
 
       return settings
     },
+    getCarts: async (_: any, params: any, ctx: any) => {
+      const {
+        vtex: ioContext,
+        clients: { hub },
+      } = ctx
 
+      const { account, authToken } = ioContext
+      const headers = {
+        ...defaultHeaders(authToken),
+        'REST-Range': `resources=0-100`,
+        Pragma: 'no-cache',
+        'Cache-Control': 'no-cache',
+      }
+
+      const url = routes.listCarts(account, encodeURIComponent(params.email))
+
+      try {
+        const { data } = await hub.get(url, headers)
+
+        return data
+      } catch (e) {
+        if (e.message) {
+          throw new GraphQLError(e.message)
+        } else if (e.response && e.response.data && e.response.data.message) {
+          throw new GraphQLError(e.response.data.message)
+        }
+      }
+    },
     currentTime: async (_: any, __: any, ___: any) => {
       return new Date().toISOString()
     },
@@ -240,25 +266,13 @@ export const resolvers = {
         clients: { hub },
       } = ctx
 
-      const { account, authToken } = ioContext
-      const token =
-        ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
-        ctx.cookies.get(`VtexIdclientAutCookie`)
-
-      const useHeaders = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        VtexIdclientAutCookie: token,
-        'Proxy-Authorization': authToken,
-      }
+      const { account } = ioContext
 
       try {
         // CLEAR CURRENT CART
-        await hub.post(
-          routes.clearCart(account, params.orderFormId),
-          useHeaders,
-          { expectedOrderFormSections: ['items'] }
-        )
+        await hub.post(routes.clearCart(account, params.orderFormId), {
+          expectedOrderFormSections: ['items'],
+        })
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
@@ -274,42 +288,33 @@ export const resolvers = {
       } = ctx
 
       const { account, authToken } = ioContext
-      const token =
-        ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
-        ctx.cookies.get(`VtexIdclientAutCookie`)
-
-      const useHeaders = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        VtexIdclientAutCookie: token,
-        'Proxy-Authorization': authToken,
-      }
 
       try {
         // CLEAR CURRENT CART
-        await hub.post(
-          routes.clearCart(account, params.orderFormId),
-          useHeaders,
-          { expectedOrderFormSections: ['items'] }
-        )
+        await hub.post(routes.clearCart(account, params.orderFormId), {
+          expectedOrderFormSections: ['items'],
+        })
 
         // ADD ITEMS TO CART
-        const {
-          data: { items: itemsAdded },
-        } = await hub.post(
-          routes.addToCart(account, params.orderFormId),
-          useHeaders,
-          {
+        // const {
+        //   data: { items: itemsAdded },
+        // }
+        const data = await hub
+          .post(routes.addToCart(account, params.orderFormId), {
             expectedOrderFormSections: ['items'],
             orderItems: params.items.map((item: any) => {
               return {
                 id: item.id,
                 quantity: item.quantity,
-                seller: '1',
+                seller: item.seller || '1',
               }
             }),
-          }
-        )
+          })
+          .then((res: any) => {
+            return res.data
+          })
+
+        const { items: itemsAdded } = data
 
         const sellingPriceMap = indexBy(
           prop('id'),
@@ -332,10 +337,23 @@ export const resolvers = {
           })
         })
 
+        const token =
+          ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
+          ctx.cookies.get(`VtexIdclientAutCookie`)
+
+        const useHeaders = {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          VtexIdclientAutCookie: token,
+          'Proxy-Authorization': authToken,
+        }
+
         await hub.post(
           routes.addPriceToItems(account, params.orderFormId),
-          useHeaders,
-          { orderItems }
+          {
+            orderItems,
+          },
+          useHeaders
         )
 
         if (params.customData && params.customData.customApps.length) {
@@ -344,7 +362,6 @@ export const resolvers = {
               (app: { id: string; fields: any }) =>
                 hub.put(
                   routes.addCustomData(account, params.orderFormId, app.id),
-                  useHeaders,
                   app.fields
                 )
             )
@@ -360,17 +377,16 @@ export const resolvers = {
     },
     orderQuote: async (_: any, params: any, ctx: any) => {
       const {
-        vtex: ioContext,
-        clients: { hub },
+        clients: { masterdata },
       } = ctx
 
-      const { account, authToken } = ioContext
-
-      const headers = defaultHeaders(authToken)
-      const url = routes.orderQuote(account)
-
       try {
-        const { data } = await hub.post(url, headers, params.cart)
+        const data = await masterdata
+          .createDocument({
+            dataEntity: 'cart',
+            fields: params.cart,
+          })
+          .then((res: any) => res)
 
         return data.Id
       } catch (e) {
@@ -439,17 +455,16 @@ export const resolvers = {
 
     removeCart: async (_: any, params: any, ctx: any) => {
       const {
-        vtex: ioContext,
-        clients: { hub },
+        clients: { masterdata },
       } = ctx
 
-      const { account, authToken } = ioContext
-
-      const headers = defaultHeaders(authToken)
-      const url = routes.removeCart(account, params.id)
-
       try {
-        const result = await hub.delete(url, headers)
+        const result = await masterdata
+          .deleteDocument({
+            dataEntity: 'cart',
+            id: params.id,
+          })
+          .then((res: any) => res)
 
         if (result.status === 204) {
           return true

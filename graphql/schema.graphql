@@ -1,5 +1,6 @@
 type Query {
   getSetupConfig: GetSetupConfigResponse @cacheControl(scope: PRIVATE)
+  getCarts(email: String): [CartResponse] @cacheControl(scope: PRIVATE)
   currentTime: String @cacheControl(scope: PRIVATE)
 }
 
