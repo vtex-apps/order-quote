@@ -38,6 +38,9 @@
       "name": "SaveOrderFormConfiguration"
     },
     {
+      "name": "POWER_USER_DS"
+    },
+    {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",

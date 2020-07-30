@@ -210,7 +210,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           total,
           shipping,
           creationDate,
-        } = res.data.getCart[0]
+        } = res.data.getCart
         const exp = new Date(creationDate)
         const { cartLifeSpan, storeLogoUrl } =
           GetSetupConfig?.getSetupConfig?.adminSetup || DEFAULT_ADMIN_SETUP
@@ -223,7 +223,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           ..._state,
           expires: exp,
           logo: storeLogoUrl,
-          quoteList: res.data.getCart[0],
+          quoteList: res.data.getCart,
           summary: [
             {
               label: translateMessage({

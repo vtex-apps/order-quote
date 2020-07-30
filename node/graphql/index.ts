@@ -26,7 +26,7 @@ const routes = {
   getCart: (account: string, id: string) =>
     `${routes.cartEntity(
       account
-    )}/search?id=${id}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
+    )}/documents/${id}?_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
 
   saveSchema: (account: string) =>
     `${routes.cartEntity(account)}/schemas/${SCHEMA_VERSION}`,
