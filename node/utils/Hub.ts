@@ -31,8 +31,10 @@ export default class RequestHub extends ExternalClient {
     })
   }
 
-  public put(url: string, data: any) {
-    return this.http.putRaw(url, data)
+  public put(url: string, data: any, headers?: any) {
+    return this.http.putRaw(url, data, {
+      headers,
+    })
   }
 
   public delete(url: string) {

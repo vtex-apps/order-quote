@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { indexBy, map, prop } from 'ramda'
 import { json } from 'co-body'
 import { Apps } from '@vtex/api'
@@ -9,7 +8,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.3'
+const SCHEMA_VERSION = 'v6.5'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -190,8 +189,9 @@ export const resolvers = {
         ) {
           try {
             const url = routes.saveSchema(account)
+            const headers = defaultHeaders(authToken)
 
-            await hub.put(url, schema)
+            await hub.put(url, schema, headers)
 
             settings.adminSetup.hasSchema = true
             settings.adminSetup.schemaVersion = SCHEMA_VERSION
@@ -214,7 +214,8 @@ export const resolvers = {
                 JSON.stringify({
                   ...checkoutConfig,
                   allowManualPrice: true,
-                })
+                }),
+                headers
               )
             }
           } catch (e) {
