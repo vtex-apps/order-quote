@@ -8,7 +8,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.5'
+const SCHEMA_VERSION = 'v6.6'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -19,18 +19,15 @@ const routes = {
     `${routes.baseUrl(account)}/checkout/pvt/configuration/orderForm`,
   cartEntity: (account: string) =>
     `${routes.baseUrl(account)}/dataentities/cart`,
-  cartDocuments: (account: string) => `${routes.cartEntity(account)}/documents`,
-  orderQuote: (account: string) => routes.cartDocuments(account),
   listCarts: (account: string, email: string) =>
     `${routes.cartEntity(
       account
-    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
+    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address&_sort=creationDate DESC`,
   getCart: (account: string, id: string) =>
     `${routes.cartEntity(
       account
     )}/search?id=${id}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
-  removeCart: (account: string, id: string) =>
-    `${routes.cartDocuments(account)}/${id}`,
+
   saveSchema: (account: string) =>
     `${routes.cartEntity(account)}/schemas/${SCHEMA_VERSION}`,
   clearCart: (account: string, id: string) =>
@@ -41,8 +38,6 @@ const routes = {
     `${routes.orderForm(account)}/${orderFormId}/customData/${appId}`,
   addPriceToItems: (account: string, orderFormId: string) =>
     `${routes.orderForm(account)}/${orderFormId}/items/update`,
-  vtexid: (token: string) =>
-    `http://vtexid.vtex.com.br/api/vtexid/pub/authenticated/user?authToken=${token}`,
 }
 
 const schema = {
@@ -363,7 +358,8 @@ export const resolvers = {
               (app: { id: string; fields: any }) =>
                 hub.put(
                   routes.addCustomData(account, params.orderFormId, app.id),
-                  app.fields
+                  app.fields,
+                  useHeaders
                 )
             )
           )
@@ -378,15 +374,23 @@ export const resolvers = {
     },
     orderQuote: async (_: any, params: any, ctx: any) => {
       const {
+        vtex: { authToken },
         clients: { masterdata },
       } = ctx
 
+      const headers = defaultHeaders(authToken)
+
       try {
         const data = await masterdata
-          .createDocument({
-            dataEntity: 'cart',
-            fields: params.cart,
-          })
+          .createDocument(
+            {
+              dataEntity: 'cart',
+              fields: params.cart,
+            },
+            {
+              options: { headers },
+            }
+          )
           .then((res: any) => res)
 
         return data.Id

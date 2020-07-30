@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ExternalClient, InstanceOptions, IOContext } from '@vtex/api'
 
 export default class RequestHub extends ExternalClient {

@@ -32,23 +32,23 @@
       "name": "read-workspace-apps"
     },
     {
-      "name": "colossus-write-logs"
+      "name": "update-app-settings"
     },
     {
-      "name": "update-app-settings"
+      "name": "SaveOrderFormConfiguration"
     },
     {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
-        "path": "/api/dataentities/cart/*"
+        "path": "/api/checkout/pub/orderForm/*"
       }
     },
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "vtexid.vtex.com.br",
-        "path": "/api/vtexid/pub/authenticated/*"
+        "host": "api.vtex.com",
+        "path": "/api/dataentities/*"
       }
     },
     {
@@ -61,27 +61,9 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "api.vtex.com",
-        "path": "/api/*"
+        "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/dataentities/cart/*"
       }
-    },
-    {
-      "name": "ADMIN_CRM"
-    },
-    {
-      "name": "POWER_USER_CRM"
-    },
-    {
-      "name": "ADMIN_DS"
-    },
-    {
-      "name": "POWER_USER_DS"
-    },
-    {
-      "name": "SaveOrderFormConfiguration"
-    },
-    {
-      "name": "POWER_USER_DS"
     }
   ],
   "settingsSchema": {
