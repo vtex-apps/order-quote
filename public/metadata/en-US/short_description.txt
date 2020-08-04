@@ -1,1 +1,1 @@
-B2B functionality that enables you to save items from the cart with their current prices for further use
+B2B functionality that enables you to save items from the cart with their current prices for further use.
