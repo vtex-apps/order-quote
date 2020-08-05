@@ -1,0 +1,41 @@
+query getCarts($email: String) {
+  getCarts(email: $email) {
+    email
+    cartName
+    items {
+      name
+      skuName
+      refId
+      id
+      productId
+      imageUrl
+      listPrice
+      price
+      quantity
+      sellingPrice
+    }
+    creationDate
+    id
+    subtotal
+    discounts
+    shipping
+    total
+    customData {
+      customApps {
+        fields
+        id
+        major
+      }
+    }
+    address {
+      city
+      complement
+      country
+      neighborhood
+      number
+      postalCode
+      state
+      street
+    }
+  }
+}

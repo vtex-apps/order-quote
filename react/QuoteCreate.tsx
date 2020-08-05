@@ -26,7 +26,6 @@ import getSetupConfig from './graphql/getSetupConfig.graphql'
 const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   SaveCartMutation,
   ClearCartMutation,
-  GetSetupConfig,
   intl,
   data: { orderForm },
 }: any) => {
@@ -55,16 +54,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     const action = undefined
 
     showToast({ message, action })
-  }
-
-  if (GetSetupConfig?.getSetupConfig) {
-    const {
-      getSetupConfig: { adminSetup },
-    } = GetSetupConfig
-
-    if (adminSetup) {
-      console.log('adminSetup', adminSetup)
-    }
   }
 
   const defaultSchema = {
@@ -135,8 +124,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       const url: any = history.location.pathname.split('/')
       url.pop()
       itemsCopy = null
+
       navigate({
         to: url.join('/'),
+        fetchPage: true,
       })
     })
   }
@@ -253,11 +244,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               if (clearCart) {
                 handleClearCart(orderForm.orderFormId)
               } else {
-                setTimeout(() => {
-                  navigate({
-                    to: '/orderquote',
-                  })
-                }, 1000)
+                navigate({
+                  page: 'store.orderquote',
+                  fetchPage: true,
+                })
               }
             } else {
               toastMessage('store/orderquote.create.error')
@@ -295,6 +285,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'checkboxClear',
     'buttonSave',
     'listContainer',
+    'notAuthenticatedMessage',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)

@@ -1,0 +1,1 @@
+Funcionalidad B2B que permite guardar los artículos del carrito con sus precios actuales para su uso posterior.

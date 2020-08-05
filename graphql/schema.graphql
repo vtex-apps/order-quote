@@ -1,12 +1,13 @@
 type Query {
   getSetupConfig: GetSetupConfigResponse @cacheControl(scope: PRIVATE)
+  getCarts(email: String): [CartResponse] @cacheControl(scope: PRIVATE)
   currentTime: String @cacheControl(scope: PRIVATE)
 }
 
 type Mutation {
   orderQuote(cart: Cart): String @cacheControl(scope: PRIVATE)
   getCarts(email: String): [CartResponse] @cacheControl(scope: PRIVATE)
-  getCart(id: String): [CartResponse] @cacheControl(scope: PRIVATE)
+  getCart(id: String): CartResponse @cacheControl(scope: PRIVATE)
   removeCart(id: String, expired: Boolean): Boolean!
     @cacheControl(scope: PRIVATE)
   useCart(

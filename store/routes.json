@@ -1,11 +1,14 @@
 {
   "store.orderquote": {
+    "title": "My quotation list",
     "path": "/orderquote"
   },
   "store.create": {
+    "title": "Save Quotation",
     "path": "/orderquote/create"
   },
   "store.view": {
+    "title": "Quote detail",
     "path": "/orderquote/view/:id"
   }
 }
