@@ -1,6 +1,13 @@
-## About
+## Overview
 
-This app provides **B2B** capabilities to save a Cart (Items, Quantities and Price) for further use. The user can also Print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
+Order Quote is a solution for B2B stores that allows customers to save a shopping cart for further use, reducing the time and effort required to complete a purchase order.
+
+This app provides B2B capabilities to save a cart (items, quantities and current price) as a quotation. The user can also print the quotation containing the cart’s contents along with an expiration date which can be configured in the account’s admin.
+
+## Features
+
+- Saves a cart’s items, quantities and current prices as a quotation
+- Allows printing of the quotation containing the cart information and its expiration date
 
 ## Configuration
 
