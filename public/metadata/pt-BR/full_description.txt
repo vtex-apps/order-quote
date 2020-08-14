@@ -1,12 +1,19 @@
 ## Sobre
 
-Este aplicativo ativa a função de orçamentos para o segmento B2B, que permite salvar seu carrinho (produtos, quantidades e valores) para uso posterior. O usuário pode imprimir este orçamento contendo todos os detalhes, assim como a data de validade.
+Order Quote é uma solução para lojas B2B que permite aos clientes salvar um carrinho de compras para uso posterior, reduzindo o tempo e o esforço necessários para concluir um pedido de compra.
+
+Este aplicativo oferece recursos B2B para salvar um carrinho (itens, quantidades e preço atual) como uma cotação. O usuário também pode imprimir a cotação com o conteúdo do carrinho junto com uma data de validade que pode ser configurada no painel do administrador.
+
+## Funcionalidades
+
+- Salve os itens, quantidades e preços atuais do carrinho como um orçamento;
+- Imprima o orçamento contendo as informações do carrinho e seu prazo de validade.
 
 ## Configuração
 
-1. Instale este app a partir da VTEX APP Store;
-2. Selecione **Orçamentos**, na aba de Configurações do app;
-3. Defina o tempo de vida do orçamento (**Lifespan**) e a URL para uma imagem do logotipo de sua empresa (**Store logo URL**);
+1. Instale este aplicativo através da VTEX APP Store;
+2. Selecione **Order Quote**, na guia Configurações do aplicativo;
+3. Defina o **Lifespan** e **Store logo URL**;
 4. Clique em **Salvar**.
 
-Este app vai criar uma nova página em `/orderquote`.
+Este app vai criar uma nova rota em `/orderquote`.
