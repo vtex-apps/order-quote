@@ -8,12 +8,3 @@ Esta aplicación ofrece funciones B2B para guardar un carrito (artículos, canti
 
 - Guarde los artículos, cantidades y precios actuales del carrito como presupuesto;
 - Imprime el presupuesto que contiene la información del carrito y su fecha de vencimiento.
-
-## Configuración
-
-1. Instale esta aplicación a través de VTEX APP Store;
-2. Seleccione **Order Quote**, en la pestaña Configuración de la aplicación;
-3. Configure la **Lifespan** y la **Store logo URL**;
-4. Haga clic en **Salvar**.
-
-Esta aplicación creará una nueva ruta en `/ orderquote`.
