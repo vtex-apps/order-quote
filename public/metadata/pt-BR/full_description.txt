@@ -8,12 +8,3 @@ Este aplicativo oferece recursos B2B para salvar um carrinho (itens, quantidades
 
 - Salve os itens, quantidades e preços atuais do carrinho como um orçamento;
 - Imprima o orçamento contendo as informações do carrinho e seu prazo de validade.
-
-## Configuração
-
-1. Instale este aplicativo através da VTEX APP Store;
-2. Selecione **Order Quote**, na guia Configurações do aplicativo;
-3. Defina o **Lifespan** e **Store logo URL**;
-4. Clique em **Salvar**.
-
-Este app vai criar uma nova rota em `/orderquote`.

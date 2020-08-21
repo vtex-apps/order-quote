@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Remove setup instructions from app store descriptions
+- App icon revision
+
 ## [1.1.3] - 2020-08-18
 
 ### Fixed
