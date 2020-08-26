@@ -1,0 +1,13 @@
+{
+  "name": "Order Quote",
+  "headline": "Adiciona uma funcionalidade para lojas B2B, permitindo salvar orçamentos com seus valores para uso posterior.",
+  "overview": "Order Quote é uma solução para lojas B2B que permite aos clientes salvar um carrinho de compras para uso posterior, reduzindo o tempo e o esforço necessários para concluir um pedido de compra.\n\nEste aplicativo oferece recursos B2B para salvar um carrinho (itens, quantidades e preço atual) como uma cotação. O usuário também pode imprimir a cotação com o conteúdo do carrinho junto com uma data de validade que pode ser configurada no painel do administrador.",
+  "features": [
+    "Salve os itens, quantidades e preços atuais do carrinho como um orçamento;",
+    "Imprima o orçamento contendo as informações do carrinho e seu prazo de validade."
+  ],
+  "websiteURL": "https://vtex.com/",
+  "support": {
+    "url": "https://support.vtex.com/hc/requests"
+  }
+}
