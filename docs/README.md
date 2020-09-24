@@ -1,66 +1,81 @@
-`📢 Use this project, [contribute](https://github.com/vtex-apps/orderquote) to it or open issues to help evolve it using [Store Discussion](https://github.com/vtex-apps/store-discussion).`
+📢 Use this project, [contribute](https://github.com/vtex-apps/orderquote) to it or open issues to help evolve it using [Store Discussion](https://github.com/vtex-apps/store-discussion).
 
-# ORDER QUOTE
+# Order Quote
 
-This app provides **B2B** capabilities to save a Cart (Items, Quantities and Price) for further use, the user can also Print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
+The Order Quote app provides **B2B** capabilities to save a shopping cart (its items, product quantities and prices) for further use.
 
-![View Quotation](./image/view.png)
+The user can also print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
+
+![quick-order](https://user-images.githubusercontent.com/52087100/94163217-f5f35500-fe5d-11ea-8ac1-b1fd3c717ae5.png)
 
 ## Configuration
 
-### Environment instalation
-
-Install this app by running `vtex install vtex.orderquote` on the [vtex toolbelt](https://vtex.io/docs/concepts/toolbelt/), after that, head over to the Admin `/admin/apps`, select **Order Quote**, now under the settings section, define the **Lifespan** and **Store logo URL**, click **Save**.
-
-### Store Theme: Dependencies
-
-After installing the app in your account, add it as a `peerDependency` in your `store-theme`:
+1. [Install](https://vtex.io/docs/recipes/development/installing-an-app/) the Order Quote app by running `vtex install vtex.orderquote@1.x`.
+2. Head over to your VTEX account's admin and access the **Apps** section.
+3. Select the **Order Quote** app and click on **Settings**.
+4. Fill out the **Lifespan** and **Store logo URL** fields.
+5. Click on **Save**.
+6. Add the Order Quote app as a `peerDependency` in your `store-theme`'s `manifest.json` file:
 
 ```diff
-+"peerDependencies": {
+ "peerDependencies": {
 +  "vtex.orderquote": "1.x"
-+}
+ }
 ```
 
-## What now?
+Once installed, the app will generate a few routes under the `/orderquote` path in order to create the Order Quote custom page. Namely, they are:
 
-This app will generate a few routes under the `/orderquote` path.
+| Route                  | Description                                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `/orderquote`          | Lists all saved cart quotations.                                                                                |
+| `/orderquote/create`   | Retrieves the current cart information, allowing you to create cart quotations as you desire.                   |
+| `/orderquote/view/:ID` | Details page, displayed when you click on a quote from the listing page (`/orderquote`).                        |
 
-| Route                  | Description                                                                            |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| `/orderquote`          | List all saved quotations                                                              |
-| `/orderquote/create`   | Creation page, this page will retrieve the current cart information                    |
-| `/orderquote/view/:ID` | When you click to a quote at the listing page, you'll be redirected to the detail page |
+The new routes already contain a default template with all blocks automatically exported by the `orderquote` app, meaning that the Order Quote pages are ready to be rendered and no further actions are required from you. 
+
+However, you can **customize the Order Quote pages overwriting the template by creating a brand new one as you wish**. To do so, check the **Advanced configurations** section below.*
 
 ## Customization
 
-`In order to apply CSS customizations in this and other blocks, follow the instructions given in the recipe on [Using CSS Handles for store customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization).`
+In order to apply CSS customizations in this and other blocks, follow the instructions given in the recipe on [Using CSS Handles for store customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization).
 
 | CSS Handles               |
 | ------------------------- |
-| `containerList`           |
-| `createButton`            |
-| `inputCreate`             |
-| `listContainer`           |
-| `containerCreate`         |
-| `inputCreate`             |
-| `buttonsContainer`        |
-| `checkboxClear`           |
-| `buttonSave`              |
-| `containerView`           |
 | `buttonDelete`            |
 | `buttonPrint`             |
+| `buttonSave`              |
+| `buttonsContainer`        |
 | `buttonUse`               |
-| `printingArea`            |
+| `checkboxClear`           |
+| `containerCreate`         |
 | `containerFields`         |
+| `containerList`           |
+| `containerView`           |
+| `createButton`            |
 | `field`                   |
-| `totalizerContainer`      |
+| `inputCreate`             |
+| `inputCreate`             |
+| `listContainer`           |
 | `logo`                    |
 | `notAuthenticatedMessage` |
+| `printingArea`            |
+| `totalizerContainer`      |
 
----
+<!-- DOCS-IGNORE:start -->
 
-Check out some documentation models that are already live:
+## Contributors ✨
 
-- [Order Quote](https://github.com/vtex-apps/orderquote)
-- [Image](https://vtex.io/docs/components/general/vtex.store-components/image)
+Thanks goes to these wonderful people:
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
+
+<!-- DOCS-IGNORE:end -->
+
