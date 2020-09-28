@@ -2,6 +2,12 @@
 
 # Order Quote
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 The Order Quote app provides **B2B** capabilities to save a shopping cart (its items, product quantities and prices) for further use.
 
 The user can also print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
@@ -23,7 +29,7 @@ The user can also print the quotation information containing the cart informatio
  }
 ```
 
-Once installed, the app will generate a few routes under the `/orderquote` path in order to create the Order Quote custom page. Namely, they are:
+Once declared as a [Peer Dependency](https://vtex.io/docs/concepts/peerdependencies/), the app will generate a few routes under the `/orderquote` path in order to create the Order Quote custom page. Namely, they are:
 
 | Route                  | Description                                                                                                     |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------- |
