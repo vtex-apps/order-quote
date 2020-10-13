@@ -1,10 +1,10 @@
-`📢 Use this project, [contribute](https://github.com/vtex-apps/orderquote) to it or open issues to help evolve it using [Store Discussion](https://github.com/vtex-apps/store-discussion).`
+`📢 Use this project, [contribute](https://github.com/vtex-apps/order-quote) to it or open issues to help evolve it using [Store Discussion](https://github.com/vtex-apps/store-discussion).`
 
 # ORDER QUOTE
 
 This app provides **B2B** capabilities to save a Cart (Items, Quantities and Price) for further use, the user can also Print the quotation information containing the cart information along with expiration date which is defined at **Admin > Apps**.
 
-![View Quotation](./image/view.png)
+![View Quotation](https://github.com/vtex-apps/order-quote/raw/master/docs/image/view.png)
 
 ## Configuration
 
@@ -62,5 +62,5 @@ This app will generate a few routes under the `/orderquote` path.
 
 Check out some documentation models that are already live:
 
-- [Order Quote](https://github.com/vtex-apps/orderquote)
+- [Order Quote](https://github.com/vtex-apps/order-quote)
 - [Image](https://vtex.io/docs/components/general/vtex.store-components/image)
