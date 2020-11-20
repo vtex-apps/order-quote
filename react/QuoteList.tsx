@@ -1,6 +1,5 @@
 /* eslint-disable vtex/prefer-early-return */
-/* eslint-disable no-console */
-import React, { useEffect } from 'react'
+import React from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { Table, Button, PageHeader } from 'vtex.styleguide'
@@ -12,13 +11,11 @@ import { useRuntime } from 'vtex.render-runtime'
 import getCarts from './queries/getCarts.gql'
 import getOrderForm from './queries/orderForm.gql'
 
-let initialLoad = true
-
 const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   data: { orderForm },
   intl,
 }: any) => {
-  const [getQuoteList, { data, loading }] = useLazyQuery(getCarts, {
+  const [getQuoteList, { data, loading, called }] = useLazyQuery(getCarts, {
     fetchPolicy: 'no-cache',
     partialRefetch: true,
   })
@@ -36,12 +33,10 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       },
     })
   }
-  useEffect(() => {
-    if (orderForm && initialLoad) {
-      initialLoad = false
-      fetch()
-    }
-  })
+
+  if (orderForm?.clientProfileData?.email && !called) {
+    fetch()
+  }
 
   const defaultSchema = {
     properties: {
@@ -55,11 +50,10 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
+          const discount = cellData === 0 ? cellData : cellData / 100
           return (
             <span className="tr w-100">
-              <FormattedCurrency
-                value={cellData > 0 ? cellData / 100 : cellData}
-              />
+              <FormattedCurrency value={discount} />
             </span>
           )
         },
@@ -70,11 +64,11 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
-          const newCellData = cellData > 0 ? cellData / 100 : cellData
+          const newCellData = cellData === 0 ? cellData : cellData / 100
           return (
             <span className="tr w-100">
               <FormattedCurrency
-                value={newCellData > 0 ? newCellData / 100 : newCellData}
+                value={newCellData === 0 ? newCellData : newCellData / 100}
               />
             </span>
           )
@@ -89,7 +83,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           return (
             <span className="tr w-100">
               <FormattedCurrency
-                value={cellData > 0 ? cellData / 100 : cellData}
+                value={cellData === 0 ? cellData : cellData / 100}
               />
             </span>
           )
@@ -116,7 +110,8 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const CSS_HANDLES = [
     'containerList',
-    'createButton',
+    'refreshButton',
+    'refreshLoading',
     'listContainer',
     'notAuthenticatedMessage',
   ] as const
@@ -129,21 +124,33 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           id: 'store/orderquote.list.title',
         })}
       >
-        <div className={`${handles.createButton}`}>
+        <span
+          className={`mr3 ${handles.refreshButton} ${
+            loading ? 'refreshLoading' : ''
+          }`}
+        >
           <Button
-            variation="primary"
+            size="small"
+            variation="tertiary"
+            disabled={loading}
             onClick={() => {
-              navigate({
-                page: `store.create`,
-              })
-              setTimeout(() => {
-                initialLoad = true
-              }, 1000)
+              fetch()
             }}
           >
-            <FormattedMessage id="store/orderquote.button.new" />
+            <FormattedMessage id="store/orderquote.button.refresh" />
           </Button>
-        </div>
+        </span>
+
+        <Button
+          variation="primary"
+          onClick={() => {
+            navigate({
+              page: `store.create`,
+            })
+          }}
+        >
+          <FormattedMessage id="store/orderquote.button.new" />
+        </Button>
       </PageHeader>
 
       <div className="flex flex-row ph5 ph7-ns">
@@ -162,7 +169,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 schema={defaultSchema}
                 items={data.getCarts}
                 density="high"
-                loading={loading}
+                loading={!called && loading}
                 onRowClick={({ rowData }: any) => {
                   navigate({
                     to: `/orderquote/view/${rowData.id}`,

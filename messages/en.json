@@ -37,6 +37,7 @@
   "store/orderquote.button.print": "Print",
   "store/orderquote.button.use": "Use",
   "store/orderquote.button.new": "New",
+  "store/orderquote.button.refresh": "Refresh",
   "store/orderquote.button.back": "Back",
   "store/orderquote.button.clear": "Clear cart after saving",
   "store/orderquote.delete.confirmation.title": "Confirm?",

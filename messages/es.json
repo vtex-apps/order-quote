@@ -37,6 +37,7 @@
   "store/orderquote.button.print": "Imprimir",
   "store/orderquote.button.use": "Usar",
   "store/orderquote.button.new": "Nueva",
+  "store/orderquote.button.refresh": "Actualizar",
   "store/orderquote.button.back": "Atrás",
   "store/orderquote.button.clear": "Vaciar el carro después de guardar",
   "store/orderquote.delete.confirmation.title": "Sí, Borrar",

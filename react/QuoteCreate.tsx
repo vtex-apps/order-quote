@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -14,7 +13,6 @@ import { useCssHandles } from 'vtex.css-handles'
 import { compose, graphql } from 'react-apollo'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { useRuntime } from 'vtex.render-runtime'
-import _ from 'underscore'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 
@@ -36,7 +34,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     clearCart: false,
   })
 
-  const { history, navigate } = useRuntime()
+  const { navigate } = useRuntime()
 
   const { showToast } = useContext(ToastContext)
 
@@ -121,12 +119,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         orderFormId,
       },
     }).then(() => {
-      const url: any = history.location.pathname.split('/')
-      url.pop()
       itemsCopy = null
-
       navigate({
-        to: url.join('/'),
+        page: 'store.orderquote',
+        fallbackToWindowLocation: true,
         fetchPage: true,
       })
     })
@@ -207,7 +203,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           id: null,
           email: orderForm.clientProfileData.email,
           cartName: name,
-          items: _.map(orderForm.items, (item: any) => {
+          items: orderForm.items.map((item: any) => {
             return {
               name: item.name,
               skuName: item.skuName,
@@ -223,7 +219,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           }),
           creationDate: new Date().toISOString(),
           subtotal: parseInt(String(subtotal * 100), 0),
-          discounts: parseInt(String(discounts * 100), 0),
+          discounts: parseInt(String(discounts), 0),
           shipping: parseInt(String(shippingCost * 100), 0),
           total: parseInt(String(value * 100), 0),
           customData: encodeCustomData(customData),

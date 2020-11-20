@@ -53,5 +53,4 @@ export default new Service<Clients, RecorderState, ParamsContext>({
       Mutation: resolvers.Mutation,
     },
   },
-  routes: resolvers.Routes,
 })

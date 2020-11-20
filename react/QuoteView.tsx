@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -16,7 +15,6 @@ import { FormattedCurrency } from 'vtex.format-currency'
 import { useRuntime } from 'vtex.render-runtime'
 import OrderFormQuery from 'vtex.checkout-resources/QueryOrderForm'
 import { OrderForm } from 'vtex.checkout-graphql'
-import _ from 'underscore'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 
@@ -217,8 +215,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line radix
         exp.setDate(exp.getDate() + parseInt(cartLifeSpan))
 
-        const newSubtotal = subtotal > 0 ? subtotal / 100 : subtotal
-        const newShipping = shipping > 0 ? shipping / 100 : shipping
+        const newSubtotal = subtotal === 0 ? subtotal : subtotal / 100
+        const newShipping = shipping === 0 ? shipping : shipping / 100
         setState({
           ..._state,
           expires: exp,
@@ -231,7 +229,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               }),
               value: (
                 <FormattedCurrency
-                  value={newSubtotal > 0 ? newSubtotal / 100 : newSubtotal}
+                  value={newSubtotal === 0 ? newSubtotal : newSubtotal / 100}
                 />
               ),
               isLoading: false,
@@ -242,7 +240,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               }),
               value: (
                 <FormattedCurrency
-                  value={newShipping > 0 ? newShipping / 100 : newShipping}
+                  value={newShipping === 0 ? newShipping : newShipping / 100}
                 />
               ),
               isLoading: false,
@@ -253,7 +251,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               }),
               value: (
                 <FormattedCurrency
-                  value={discounts > 0 ? discounts / 100 : discounts}
+                  value={discounts === 0 ? discounts : discounts / 100}
                 />
               ),
               isLoading: false,
@@ -263,7 +261,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 id: 'store/orderquote.summary.total',
               }),
               value: (
-                <FormattedCurrency value={total > 0 ? total / 100 : total} />
+                <FormattedCurrency value={total === 0 ? total : total / 100} />
               ),
               isLoading: false,
             },
