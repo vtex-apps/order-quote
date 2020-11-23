@@ -7,14 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Refresh button to the listing page
+- New css handles `refreshButton` and `refreshLoading`
+
+### Fixed
+
+- Discount multiplier
+
+### Removed
+
+- CSS Handle `createButton`
+- `underscore` dependency
+- pvt routes
+
 ## [1.1.7] - 2020-10-14
 
 ## [1.1.6] - 2020-10-14
+
 ### Fixed
+
 - Documentation review and update
 
 ## [1.1.5] - 2020-08-26
+
 ### Added
+
 - New metadada folder structure
 - License files
 - Localization file

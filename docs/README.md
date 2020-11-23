@@ -31,13 +31,13 @@ The user can also print the quotation information containing the cart informatio
 
 Once declared as a [Peer Dependency](https://vtex.io/docs/concepts/peerdependencies/), the app will generate a few routes under the `/orderquote` path in order to create the Order Quote custom page. Namely, they are:
 
-| Route                  | Description                                                                                                     |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `/orderquote`          | Lists all saved cart quotations.                                                                                |
-| `/orderquote/create`   | Retrieves the current cart information, allowing you to create cart quotations as you desire.                   |
-| `/orderquote/view/:ID` | Details page, displayed when you click on a quote from the listing page (`/orderquote`).                        |
+| Route                  | Description                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `/orderquote`          | Lists all saved cart quotations.                                                              |
+| `/orderquote/create`   | Retrieves the current cart information, allowing you to create cart quotations as you desire. |
+| `/orderquote/view/:ID` | Details page, displayed when you click on a quote from the listing page (`/orderquote`).      |
 
-The new routes already contain a default template with all blocks automatically exported by the `orderquote` app, meaning that the Order Quote pages are ready to be rendered and no further actions are required from you. 
+The new routes already contain a default template with all blocks automatically exported by the `orderquote` app, meaning that the Order Quote pages are ready to be rendered and no further actions are required from you.
 
 ## Customization
 
@@ -55,7 +55,8 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 | `containerFields`         |
 | `containerList`           |
 | `containerView`           |
-| `createButton`            |
+| `refreshButton`           |
+| `refreshLoading`          |
 | `field`                   |
 | `inputCreate`             |
 | `inputCreate`             |
@@ -82,4 +83,3 @@ Thanks goes to these wonderful people:
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
 <!-- DOCS-IGNORE:end -->
-

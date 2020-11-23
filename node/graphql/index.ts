@@ -1,5 +1,4 @@
 import { indexBy, map, prop } from 'ramda'
-import { json } from 'co-body'
 import { Apps } from '@vtex/api'
 
 import GraphQLError from '../utils/GraphQLError'
@@ -95,77 +94,7 @@ const defaultHeaders = (authToken: string) => ({
   'Proxy-Authorization': authToken,
 })
 
-const setDefaultHeaders = (ctx: any) => {
-  ctx.set('Access-Control-Allow-Origin', '*')
-  ctx.set('Access-Control-Allow-Methods', 'POST, GET, DELETE, OPTIONS')
-  ctx.set(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, authorization'
-  )
-  ctx.set('Cache-Control', 'no-cache')
-}
-
 export const resolvers = {
-  Routes: {
-    orderQuote: async (ctx: any) => {
-      setDefaultHeaders(ctx)
-      try {
-        ctx.body = await resolvers.Mutation.orderQuote(
-          {},
-          {
-            cart: await json(ctx.req),
-          },
-          ctx
-        )
-        ctx.status = 200
-      } catch (e) {
-        ctx.body = e
-        ctx.status = 500
-      }
-    },
-    removeCart: async (ctx: any) => {
-      setDefaultHeaders(ctx)
-      try {
-        const { expired } = await json(ctx.req)
-        const { cartId: id } = ctx.vtex.route.params
-
-        ctx.body = await resolvers.Mutation.removeCart(
-          {},
-          {
-            expired,
-            id,
-          },
-          ctx
-        )
-        ctx.status = 200
-      } catch (e) {
-        ctx.body = e
-        ctx.status = 500
-      }
-    },
-    useCart: async (ctx: any) => {
-      setDefaultHeaders(ctx)
-      try {
-        const { items, userType, customData } = await json(ctx.req)
-        const { orderFormId } = ctx.vtex.route.params
-
-        ctx.body = await resolvers.Mutation.useCart(
-          {},
-          {
-            items,
-            userType,
-            orderFormId,
-            customData,
-          },
-          ctx
-        )
-        ctx.status = 200
-      } catch (e) {
-        ctx.body = e
-        ctx.status = 500
-      }
-    },
-  },
   Query: {
     getSetupConfig: async (_: any, __: any, ctx: any) => {
       const {
@@ -413,6 +342,8 @@ export const resolvers = {
       const headers = {
         ...defaultHeaders(authToken),
         'REST-Range': `resources=0-100`,
+        Pragma: 'no-cache',
+        'Cache-Control': 'no-cache',
       }
 
       const url = routes.listCarts(account, encodeURIComponent(params.email))

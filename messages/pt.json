@@ -37,6 +37,7 @@
   "store/orderquote.button.print": "Imprimir",
   "store/orderquote.button.use": "Usar",
   "store/orderquote.button.new": "Nova cotação",
+  "store/orderquote.button.refresh": "Atualizar",
   "store/orderquote.button.back": "Voltar",
   "store/orderquote.button.clear": "Limpe o carrinho após criar",
   "store/orderquote.delete.confirmation.title": "Confirma?",
