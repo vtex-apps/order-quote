@@ -44,9 +44,6 @@
       "name": "ADMIN_DS"
     },
     {
-      "name": "Televendas"
-    },
-    {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
