@@ -26,9 +26,7 @@
     "vtex.css-handles": "0.x",
     "vtex.format-currency": "0.x"
   },
-  "registries": [
-    "smartcheckout"
-  ],
+  "registries": ["smartcheckout"],
   "policies": [
     {
       "name": "read-workspace-apps"
@@ -46,10 +44,13 @@
       "name": "ADMIN_DS"
     },
     {
+      "name": "Televendas"
+    },
+    {
       "name": "outbound-access",
       "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
-        "path": "/api/checkout/pub/orderForm/*"
+        "path": "/api/checkout/pub/*"
       }
     },
     {
@@ -96,26 +97,15 @@
             "type": "string"
           }
         },
-        "required": [
-          "cartLifeSpan",
-          "storeLogoUrl"
-        ]
+        "required": ["cartLifeSpan", "storeLogoUrl"]
       }
     },
-    "required": [
-      "adminSetup"
-    ]
+    "required": ["adminSetup"]
   },
   "settingsUiSchema": {
-    "ui:order": [
-      "adminSetup",
-      "hasSchema"
-    ],
+    "ui:order": ["adminSetup", "hasSchema"],
     "adminSetup": {
-      "ui:order": [
-        "cartLifeSpan",
-        "storeLogoUrl"
-      ]
+      "ui:order": ["cartLifeSpan", "storeLogoUrl"]
     },
     "hasSchema": {
       "ui:widget": "hidden"
@@ -128,9 +118,7 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": [
-      "*"
-    ]
+    "availableCountries": ["*"]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

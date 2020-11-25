@@ -212,6 +212,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         const exp = new Date(creationDate)
         const { cartLifeSpan, storeLogoUrl } =
           GetSetupConfig?.getSetupConfig?.adminSetup || DEFAULT_ADMIN_SETUP
+
         // eslint-disable-next-line radix
         exp.setDate(exp.getDate() + parseInt(cartLifeSpan))
 
