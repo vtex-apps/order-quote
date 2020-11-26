@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2020-11-26
+
 ### Fixed
 
 - Error on `Use` option was blocking the functionality when the store has deactivated `allowManualPrice`
