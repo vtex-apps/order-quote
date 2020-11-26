@@ -212,7 +212,7 @@ export const resolvers = {
         clients: { hub },
       } = ctx
 
-      const { account, authToken } = ioContext
+      const { account, logger } = ioContext
 
       try {
         // CLEAR CURRENT CART
@@ -262,24 +262,24 @@ export const resolvers = {
           })
         })
 
-        const token =
-          ctx.cookies.get(`VtexIdclientAutCookie_${account}`) ||
-          ctx.cookies.get(`VtexIdclientAutCookie`)
+        const token = ctx.cookies.get(`VtexIdclientAutCookie`)
 
         const useHeaders = {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
-          VtexIdclientAutCookie: token,
-          'Proxy-Authorization': authToken,
+          Cookie: `VtexIdclientAutCookie=${token};`,
         }
 
-        await hub.post(
-          routes.addPriceToItems(account, params.orderFormId),
-          {
-            orderItems,
-          },
-          useHeaders
-        )
+        try {
+          await hub.post(
+            routes.addPriceToItems(account, params.orderFormId),
+            {
+              orderItems,
+            },
+            useHeaders
+          )
+        } catch (err) {
+          logger.error(err)
+        }
 
         if (params.customData && params.customData.customApps.length) {
           await Promise.all(
