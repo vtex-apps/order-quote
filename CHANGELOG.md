@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Hide logo when url is `/`
+- Add sku refId when saving the quote
+
 ## [1.2.1] - 2020-11-26
 
 ### Fixed
