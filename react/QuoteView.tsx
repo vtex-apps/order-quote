@@ -281,7 +281,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         title: translateMessage({
           id: 'store/orderquote.cartList.label.sku',
         }),
-        width: 100,
+        width: 150,
       },
       skuName: {
         title: translateMessage({
@@ -418,7 +418,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             <div
               className={`flex flex-column w-100 ${handles.containerFields}`}
             >
-              {!!logo && (
+              {!!logo && logo !== '/' && (
                 <div className="mb5">
                   <img
                     src={logo}

@@ -207,7 +207,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             return {
               name: item.name,
               skuName: item.skuName,
-              refId: item.productRefId,
+              refId: item.refId,
               id: item.id,
               productId: item.productId,
               imageUrl: item.imageUrl,
