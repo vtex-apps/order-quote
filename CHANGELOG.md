@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Make cart subtotal data type from `integer` to `float`
+
 ## [1.2.2] - 2020-12-11
 
 ### Fixed
