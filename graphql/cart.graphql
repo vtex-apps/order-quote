@@ -17,7 +17,7 @@ input Cart {
   cartName: String
   items: [CartItem]
   creationDate: String
-  subtotal: Int
+  subtotal: Float
   discounts: Int
   shipping: Int
   total: Float
@@ -31,7 +31,7 @@ type CartResponse {
   items: [CartResponseItem]
   creationDate: String
   id: String
-  subtotal: Int
+  subtotal: Float
   discounts: Int
   shipping: Int
   total: Float

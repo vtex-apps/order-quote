@@ -62,7 +62,7 @@ const schema = {
       title: 'Cart Life Span',
     },
     subtotal: {
-      type: 'integer',
+      type: 'float',
       title: 'Subtotal',
     },
     discounts: {
@@ -78,7 +78,7 @@ const schema = {
       title: 'Custom Data',
     },
     total: {
-      type: ['number', 'integer'],
+      type: ['number', 'float'],
       title: 'Total',
     },
   },
