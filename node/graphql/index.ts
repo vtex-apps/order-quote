@@ -7,7 +7,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.6'
+const SCHEMA_VERSION = 'v6.7'
 
 const routes = {
   baseUrl: (account: string) =>

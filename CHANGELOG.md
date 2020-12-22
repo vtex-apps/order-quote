@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Make cart subtotal data type from `integer` to `float`
+- Updated graphql schema version
 
 ## [1.2.2] - 2020-12-11
 
