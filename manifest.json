@@ -1,7 +1,7 @@
 {
   "vendor": "vtex",
   "name": "orderquote",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "title": "Order Quote",
   "description": "B2B functionality that enables you to save items from the cart with their current prices for further use",
   "builders": {
