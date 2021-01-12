@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.4] - 2021-01-12
+
 ### Changed
 - Make cart subtotal data type from `integer` to `float`
 - Updated graphql schema version
 
+## [1.2.3] - 2020-12-29
+
+### Fixed
+
+- Compatibility adjustment migrating from an older major version
+
 ## [1.2.2] - 2020-12-11
 
 ### Fixed
+
 - Hide logo when url is `/`
 - Add sku refId when saving the quote
 

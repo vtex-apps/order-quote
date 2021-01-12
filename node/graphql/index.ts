@@ -1,5 +1,4 @@
 import { indexBy, map, prop } from 'ramda'
-import { Apps } from '@vtex/api'
 
 import GraphQLError from '../utils/GraphQLError'
 
@@ -87,6 +86,16 @@ const schema = {
   'v-cache': false,
 }
 
+const defaultSettings = {
+  adminSetup: {
+    cartLifeSpan: 30,
+    storeLogoUrl: '',
+    hasSchema: false,
+    allowManualPrice: false,
+    schemaVersion: null,
+  },
+}
+
 const defaultHeaders = (authToken: string) => ({
   'Content-Type': 'application/json',
   Accept: 'application/vnd.vtex.ds.v10+json',
@@ -99,56 +108,62 @@ export const resolvers = {
     getSetupConfig: async (_: any, __: any, ctx: any) => {
       const {
         vtex: { account, authToken },
-        clients: { hub },
+        clients: { hub, apps },
       } = ctx
 
-      const apps = new Apps(ctx.vtex)
       const app: string = getAppId()
-      const settings = await apps.getAppSettings(app)
+      let settings = await apps.getAppSettings(app)
 
-      if (settings.adminSetup) {
-        if (
-          !settings.adminSetup.hasSchema ||
-          settings.adminSetup.schemaVersion !== SCHEMA_VERSION
-        ) {
-          try {
-            const url = routes.saveSchema(account)
-            const headers = defaultHeaders(authToken)
+      if (!settings.adminSetup) {
+        settings = defaultSettings
+      }
 
-            await hub.put(url, schema, headers)
+      if (
+        !settings.adminSetup.hasSchema ||
+        settings.adminSetup.schemaVersion !== SCHEMA_VERSION
+      ) {
+        try {
+          const url = routes.saveSchema(account)
+          const headers = defaultHeaders(authToken)
 
+          await hub.put(url, schema, headers)
+
+          settings.adminSetup.hasSchema = true
+          settings.adminSetup.schemaVersion = SCHEMA_VERSION
+        } catch (e) {
+          if (e.response.status >= 400) {
+            settings.adminSetup.hasSchema = false
+          } else {
             settings.adminSetup.hasSchema = true
             settings.adminSetup.schemaVersion = SCHEMA_VERSION
-          } catch (e) {
-            settings.adminSetup.hasSchema = false
           }
         }
-
-        if (!settings.adminSetup.allowManualPrice) {
-          try {
-            settings.adminSetup.allowManualPrice = true
-            const url = routes.checkoutConfig(account)
-            const headers = defaultHeaders(authToken)
-
-            const { data: checkoutConfig } = await hub.get(url, headers, schema)
-
-            if (checkoutConfig.allowManualPrice !== true) {
-              await hub.post(
-                url,
-                JSON.stringify({
-                  ...checkoutConfig,
-                  allowManualPrice: true,
-                }),
-                headers
-              )
-            }
-          } catch (e) {
-            settings.adminSetup.allowManualPrice = false
-          }
-        }
-
-        await apps.saveAppSettings(app, settings)
       }
+
+      if (!settings.adminSetup.allowManualPrice) {
+        try {
+          settings.adminSetup.allowManualPrice = true
+          const url = routes.checkoutConfig(account)
+          const headers = defaultHeaders(authToken)
+
+          const { data: checkoutConfig } = await hub.get(url, headers, schema)
+
+          if (checkoutConfig.allowManualPrice !== true) {
+            await hub.post(
+              url,
+              JSON.stringify({
+                ...checkoutConfig,
+                allowManualPrice: true,
+              }),
+              headers
+            )
+          }
+        } catch (e) {
+          settings.adminSetup.allowManualPrice = false
+        }
+      }
+
+      await apps.saveAppSettings(app, settings)
 
       return settings
     },
