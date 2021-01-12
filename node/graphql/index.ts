@@ -6,7 +6,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.6'
+const SCHEMA_VERSION = 'v6.7'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -61,7 +61,7 @@ const schema = {
       title: 'Cart Life Span',
     },
     subtotal: {
-      type: 'integer',
+      type: 'float',
       title: 'Subtotal',
     },
     discounts: {
@@ -77,7 +77,7 @@ const schema = {
       title: 'Custom Data',
     },
     total: {
-      type: ['number', 'integer'],
+      type: ['number', 'float'],
       title: 'Total',
     },
   },
