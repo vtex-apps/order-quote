@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { indexBy, map, prop } from 'ramda'
 
 import GraphQLError from '../utils/GraphQLError'
@@ -123,18 +122,9 @@ export const resolvers = {
       const app: string = getAppId()
       let settings = await apps.getAppSettings(app)
 
-      console.log('settings A =>', settings)
-
       if (!settings.adminSetup) {
         settings = defaultSettings
       }
-
-      console.log(
-        'settings B =>',
-        settings,
-        !settings.adminSetup.hasSchema ||
-          settings.adminSetup.schemaVersion !== SCHEMA_VERSION
-      )
 
       if (
         !settings.adminSetup.hasSchema ||
@@ -148,9 +138,7 @@ export const resolvers = {
 
           settings.adminSetup.hasSchema = true
           settings.adminSetup.schemaVersion = SCHEMA_VERSION
-          console.log('A')
         } catch (e) {
-          console.log('B', e)
           if (e.response.status >= 400) {
             settings.adminSetup.hasSchema = false
           } else {
@@ -203,14 +191,11 @@ export const resolvers = {
 
       const url = routes.listCarts(account, encodeURIComponent(params.email))
 
-      console.log('URL =>', url)
-
       try {
         const { data } = await hub.get(url, headers)
 
         return data
       } catch (e) {
-        console.log('Error =>', e)
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
