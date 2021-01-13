@@ -2,6 +2,8 @@ mutation getCart($id: String) @context(scope: "private") {
   getCart(id: $id) {
     email
     cartName
+    description
+    status
     items {
       name
       skuName

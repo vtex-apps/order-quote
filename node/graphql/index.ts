@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { indexBy, map, prop } from 'ramda'
 
 import GraphQLError from '../utils/GraphQLError'
@@ -6,7 +7,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.7'
+const SCHEMA_VERSION = 'v6.8'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -20,11 +21,11 @@ const routes = {
   listCarts: (account: string, email: string) =>
     `${routes.cartEntity(
       account
-    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address&_sort=creationDate DESC`,
+    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,shipping,total,customData,address&_sort=creationDate DESC`,
   getCart: (account: string, id: string) =>
     `${routes.cartEntity(
       account
-    )}/documents/${id}?_fields=id,email,cartName,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
+    )}/documents/${id}?_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
 
   saveSchema: (account: string) =>
     `${routes.cartEntity(account)}/schemas/${SCHEMA_VERSION}`,
@@ -48,6 +49,14 @@ const schema = {
       type: 'string',
       title: 'Cart Name',
     },
+    status: {
+      type: ['null', 'string'],
+      title: 'Status',
+    },
+    description: {
+      type: ['null', 'string'],
+      title: 'Description',
+    },
     items: {
       type: 'array',
       title: 'Cart',
@@ -61,7 +70,7 @@ const schema = {
       title: 'Cart Life Span',
     },
     subtotal: {
-      type: 'float',
+      type: 'number',
       title: 'Subtotal',
     },
     discounts: {
@@ -77,11 +86,11 @@ const schema = {
       title: 'Custom Data',
     },
     total: {
-      type: ['number', 'float'],
+      type: 'number',
       title: 'Total',
     },
   },
-  'v-indexed': ['email', 'creationDate', 'cartLifeSpan', 'cartName'],
+  'v-indexed': ['email', 'creationDate', 'cartLifeSpan', 'cartName', 'status'],
   'v-default-fields': ['email', 'cart', 'creationDate', 'cartLifeSpan'],
   'v-cache': false,
 }
@@ -114,9 +123,18 @@ export const resolvers = {
       const app: string = getAppId()
       let settings = await apps.getAppSettings(app)
 
+      console.log('settings A =>', settings)
+
       if (!settings.adminSetup) {
         settings = defaultSettings
       }
+
+      console.log(
+        'settings B =>',
+        settings,
+        !settings.adminSetup.hasSchema ||
+          settings.adminSetup.schemaVersion !== SCHEMA_VERSION
+      )
 
       if (
         !settings.adminSetup.hasSchema ||
@@ -130,7 +148,9 @@ export const resolvers = {
 
           settings.adminSetup.hasSchema = true
           settings.adminSetup.schemaVersion = SCHEMA_VERSION
+          console.log('A')
         } catch (e) {
+          console.log('B', e)
           if (e.response.status >= 400) {
             settings.adminSetup.hasSchema = false
           } else {
@@ -183,11 +203,14 @@ export const resolvers = {
 
       const url = routes.listCarts(account, encodeURIComponent(params.email))
 
+      console.log('URL =>', url)
+
       try {
         const { data } = await hub.get(url, headers)
 
         return data
       } catch (e) {
+        console.log('Error =>', e)
         if (e.message) {
           throw new GraphQLError(e.message)
         } else if (e.response && e.response.data && e.response.data.message) {
