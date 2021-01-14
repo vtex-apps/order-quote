@@ -2,6 +2,8 @@ query getCarts($email: String) {
   getCarts(email: $email) {
     email
     cartName
+    description
+    status
     items {
       name
       skuName

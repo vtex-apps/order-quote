@@ -436,6 +436,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               </div>
               <div className={`mb2 ${handles.field}`}>
                 <span className="b">
+                  <FormattedMessage id="store/orderquote.view.label.description" />
+                </span>
+                : {quoteList.description}
+              </div>
+              <div className={`mb2 ${handles.field}`}>
+                <span className="b">
                   <FormattedMessage id="store/orderquote.view.label.creationDate" />
                 </span>
                 : {formatDate(quoteList.creationDate)}

@@ -15,6 +15,8 @@ input Cart {
   id: String
   email: String
   cartName: String
+  description: String
+  status: String
   items: [CartItem]
   creationDate: String
   subtotal: Float
@@ -28,6 +30,8 @@ input Cart {
 type CartResponse {
   email: String
   cartName: String
+  description: String
+  status: String
   items: [CartResponseItem]
   creationDate: String
   id: String

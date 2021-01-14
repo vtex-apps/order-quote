@@ -3,6 +3,7 @@
 import React, { useState, useContext } from 'react'
 import {
   Input,
+  Textarea,
   Button,
   Table,
   ToastContext,
@@ -29,6 +30,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 }: any) => {
   const [_state, setState] = useState<any>({
     name: '',
+    description: '',
     errorMessage: '',
     savingQuote: false,
     clearCart: false,
@@ -38,7 +40,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const { showToast } = useContext(ToastContext)
 
-  const { name, savingQuote, errorMessage, clearCart } = _state
+  const { name, description, savingQuote, errorMessage, clearCart } = _state
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -203,6 +205,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           id: null,
           email: orderForm.clientProfileData.email,
           cartName: name,
+          description,
           items: orderForm.items.map((item: any) => {
             return {
               name: item.name,
@@ -281,6 +284,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'checkboxClear',
     'buttonSave',
     'listContainer',
+    'descriptionContainer',
     'notAuthenticatedMessage',
   ] as const
 
@@ -363,6 +367,23 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="flex flex-row ph5 ph7-ns">
+            <div
+              className={`flex flex-column w-100 mb5 ${handles.descriptionContainer}`}
+            >
+              <Textarea
+                label={translateMessage({
+                  id: 'store/orderquote.create.descriptionLabel',
+                })}
+                onChange={(e: any) =>
+                  setState({ ..._state, description: e.target.value })
+                }
+                value={description}
+                maxLength="100"
+                rows="2"
+              />
             </div>
           </div>
           <div className="flex flex-row ph5 ph7-ns">
