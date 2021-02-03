@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -219,7 +218,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           creationDate,
         } = res.data.getCart
 
-        console.log('res.data.getCart =>', res.data.getCart, taxes)
         const exp = new Date(creationDate)
         const { cartLifeSpan, storeLogoUrl } =
           GetSetupConfig?.getSetupConfig?.adminSetup || DEFAULT_ADMIN_SETUP

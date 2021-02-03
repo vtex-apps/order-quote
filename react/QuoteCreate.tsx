@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -113,8 +112,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   let itemsCopy: any = orderForm?.items ? orderForm.items : []
   const { totalizers, value, customData, shippingData } = orderForm ?? {}
-
-  console.log('orderForm =>', orderForm)
 
   const subtotal = (
     totalizers?.find((x: { id: string }) => x.id === 'Items') || {
@@ -290,7 +287,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           customData: encodeCustomData(customData),
           address,
         }
-        console.log('Cart', cart)
 
         SaveCartMutation({
           variables: {
