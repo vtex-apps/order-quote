@@ -1,6 +1,12 @@
 {
   "store/orderquote.list.title": "Mi lista de cotizaciones",
   "store/orderquote.list.loadingError": "Error al cargar cotizaciones",
+  "store/orderquote.list.label.name": "Nombre",
+  "store/orderquote.list.label.discounts": "Descuentos",
+  "store/orderquote.list.label.shipping": "Envío",
+  "store/orderquote.list.label.taxes": "Impuestos",
+  "store/orderquote.list.label.total": "Total",
+  "store/orderquote.list.label.created": "Creado",
   "store/orderquote.view.title": "Detalle de cotizaciones",
   "store/orderquote.view.label.cartName": "Nombre de cotización",
   "store/orderquote.view.label.description": "Descripción",
@@ -21,6 +27,7 @@
   "store/orderquote.summary.subtotal": "Subtotal",
   "store/orderquote.summary.shipping": "Despacho",
   "store/orderquote.summary.discounts": "Descuentos",
+  "store/orderquote.summary.taxes": "Impuestos",
   "store/orderquote.summary.total": "Total",
   "store/orderquote.create.title": "Guardar Cotización",
   "store/orderquote.create.nameLabel": "Nombre",
@@ -49,5 +56,6 @@
   "store/orderquote.placeholder.quotationName": "Nombre de la Cotización",
   "store/orderquote.create.placeholder.quotationName": "Nombre de la Cotización",
   "store/orderquote.create.label.quotationName": "Nombre",
+  "store/orderquote.create.characterLeft": "{count, plural, =99{caractere disponible}=100{Se alcanzó el límite de 100 caracteres}other{caracteres disponibles}}",
   "store/orderquote.error.notAuthenticated": "Usuario no autenticado"
 }

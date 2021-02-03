@@ -41,11 +41,15 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const defaultSchema = {
     properties: {
       cartName: {
-        title: 'Name',
+        title: translateMessage({
+          id: 'store/orderquote.list.label.name',
+        }),
         width: 300,
       },
       discounts: {
-        title: 'Discounts',
+        title: translateMessage({
+          id: 'store/orderquote.list.label.discounts',
+        }),
         minWidth: 100,
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -59,7 +63,27 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         },
       },
       shipping: {
-        title: 'Shipping',
+        title: translateMessage({
+          id: 'store/orderquote.list.label.shipping',
+        }),
+        minWidth: 100,
+        headerRight: true,
+        // eslint-disable-next-line react/display-name
+        cellRenderer: ({ cellData }: any) => {
+          const newCellData = cellData === 0 ? cellData : cellData / 100
+          return (
+            <span className="tr w-100">
+              <FormattedCurrency
+                value={newCellData === 0 ? newCellData : newCellData / 100}
+              />
+            </span>
+          )
+        },
+      },
+      taxes: {
+        title: translateMessage({
+          id: 'store/orderquote.list.label.taxes',
+        }),
         minWidth: 100,
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -75,7 +99,9 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         },
       },
       total: {
-        title: 'Total',
+        title: translateMessage({
+          id: 'store/orderquote.list.label.total',
+        }),
         minWidth: 100,
         headerRight: true,
         // eslint-disable-next-line react/display-name
@@ -90,7 +116,9 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         },
       },
       creationDate: {
-        title: 'Created',
+        title: translateMessage({
+          id: 'store/orderquote.list.label.created',
+        }),
         headerRight: true,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {

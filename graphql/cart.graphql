@@ -22,6 +22,7 @@ input Cart {
   subtotal: Float
   discounts: Int
   shipping: Int
+  taxes: Int
   total: Float
   customData: CustomDataInput
   address: Address
@@ -37,6 +38,7 @@ type CartResponse {
   id: String
   subtotal: Float
   discounts: Int
+  taxes: Int
   shipping: Int
   total: Float
   customData: CustomData

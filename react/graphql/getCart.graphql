@@ -21,6 +21,7 @@ mutation getCart($id: String) @context(scope: "private") {
     subtotal
     discounts
     shipping
+    taxes
     total
     customData {
       customApps {

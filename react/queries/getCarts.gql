@@ -21,6 +21,7 @@ query getCarts($email: String) {
     subtotal
     discounts
     shipping
+    taxes
     total
     customData {
       customApps {

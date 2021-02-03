@@ -6,7 +6,7 @@ const getAppId = (): string => {
   return process.env.VTEX_APP_ID ?? ''
 }
 
-const SCHEMA_VERSION = 'v6.8'
+const SCHEMA_VERSION = 'v6.9'
 
 const routes = {
   baseUrl: (account: string) =>
@@ -20,11 +20,11 @@ const routes = {
   listCarts: (account: string, email: string) =>
     `${routes.cartEntity(
       account
-    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,shipping,total,customData,address&_sort=creationDate DESC`,
+    )}/search?email=${email}&_schema=${SCHEMA_VERSION}&_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,taxes,shipping,total,customData,address&_sort=creationDate DESC`,
   getCart: (account: string, id: string) =>
     `${routes.cartEntity(
       account
-    )}/documents/${id}?_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,shipping,total,customData,address`,
+    )}/documents/${id}?_fields=id,email,cartName,status,description,items,creationDate,subtotal,discounts,shipping,taxes,total,customData,address`,
 
   saveSchema: (account: string) =>
     `${routes.cartEntity(account)}/schemas/${SCHEMA_VERSION}`,
@@ -79,6 +79,10 @@ const schema = {
     shipping: {
       type: 'integer',
       title: 'Shipping',
+    },
+    taxes: {
+      type: ['null', 'integer'],
+      title: 'Taxes',
     },
     customData: {
       type: ['null', 'object'],
