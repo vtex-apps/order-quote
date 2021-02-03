@@ -1,6 +1,12 @@
 {
   "store/orderquote.list.title": "My quotation list",
   "store/orderquote.list.loadingError": "Error loading quotation",
+  "store/orderquote.list.label.name": "Name",
+  "store/orderquote.list.label.discounts": "Discounts",
+  "store/orderquote.list.label.shipping": "Shipping",
+  "store/orderquote.list.label.taxes": "Taxes",
+  "store/orderquote.list.label.total": "Total",
+  "store/orderquote.list.label.created": "Created",
   "store/orderquote.view.title": "Quote detail",
   "store/orderquote.view.label.cartName": "Quote name",
   "store/orderquote.view.label.description": "Description",
@@ -21,6 +27,7 @@
   "store/orderquote.summary.subtotal": "Subtotal",
   "store/orderquote.summary.shipping": "Shipping",
   "store/orderquote.summary.discounts": "Discounts",
+  "store/orderquote.summary.taxes": "Taxes",
   "store/orderquote.summary.total": "Total",
   "store/orderquote.create.title": "Save Quotation",
   "store/orderquote.create.nameLabel": "Name",
@@ -49,5 +56,6 @@
   "store/orderquote.placeholder.quotationName": "Quotation name",
   "store/orderquote.create.placeholder.quotationName": "Quotation name",
   "store/orderquote.create.label.quotationName": "Name",
+  "store/orderquote.create.characterLeft": "{count, plural, =99{character left}=100{100 characters limit reached}other{characters left}}",
   "store/orderquote.error.notAuthenticated": "User not authenticated"
 }

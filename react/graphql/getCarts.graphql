@@ -18,6 +18,7 @@ mutation getCarts($email: String) @context(scope: "private") {
     id
     subtotal
     discounts
+    taxes
     shipping
     total
     customData {

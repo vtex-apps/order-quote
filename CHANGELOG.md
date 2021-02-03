@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Tax information to the Quote list, Creation Summary and View Quote
+- Romanian translation
+- List column names are now translated
+
+### Fixed
+
+- Reference Code at the Quote Creation page
+
 ## [1.3.0] - 2021-01-14
 
 ### Added

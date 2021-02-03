@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -83,6 +84,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       {
         label: translateMessage({
           id: 'store/orderquote.summary.discounts',
+        }),
+        value: 0,
+        isLoading: true,
+      },
+      {
+        label: translateMessage({
+          id: 'store/orderquote.summary.taxes',
         }),
         value: 0,
         isLoading: true,
@@ -207,8 +215,11 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           discounts,
           total,
           shipping,
+          taxes,
           creationDate,
         } = res.data.getCart
+
+        console.log('res.data.getCart =>', res.data.getCart, taxes)
         const exp = new Date(creationDate)
         const { cartLifeSpan, storeLogoUrl } =
           GetSetupConfig?.getSetupConfig?.adminSetup || DEFAULT_ADMIN_SETUP
@@ -217,6 +228,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         exp.setDate(exp.getDate() + parseInt(cartLifeSpan))
 
         const newSubtotal = subtotal === 0 ? subtotal : subtotal / 100
+        const newTaxes = taxes === 0 ? taxes : taxes / 100
         const newShipping = shipping === 0 ? shipping : shipping / 100
         setState({
           ..._state,
@@ -253,6 +265,17 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               value: (
                 <FormattedCurrency
                   value={discounts === 0 ? discounts : discounts / 100}
+                />
+              ),
+              isLoading: false,
+            },
+            {
+              label: translateMessage({
+                id: 'store/orderquote.summary.taxes',
+              }),
+              value: (
+                <FormattedCurrency
+                  value={taxes === 0 ? taxes : newTaxes / 100}
                 />
               ),
               isLoading: false,

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useContext } from 'react'
@@ -6,6 +7,7 @@ import {
   Textarea,
   Button,
   Table,
+  Totalizer,
   ToastContext,
   Checkbox,
   PageHeader,
@@ -58,11 +60,11 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const defaultSchema = {
     properties: {
-      productRefId: {
+      refId: {
         title: translateMessage({
           id: 'store/orderquote.cartList.label.sku',
         }),
-        width: 100,
+        width: 200,
       },
       skuName: {
         title: translateMessage({
@@ -110,6 +112,85 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }
 
   let itemsCopy: any = orderForm?.items ? orderForm.items : []
+  const { totalizers, value, customData, shippingData } = orderForm ?? {}
+
+  console.log('orderForm =>', orderForm)
+
+  const subtotal = (
+    totalizers?.find((x: { id: string }) => x.id === 'Items') || {
+      value: 0,
+    }
+  ).value
+
+  const discounts = (
+    totalizers?.find((x: { id: string }) => x.id === 'Discounts') || {
+      value: 0,
+    }
+  ).value
+
+  const shippingCost = (
+    totalizers?.find((x: { id: string }) => x.id === 'Shipping') || {
+      value: 0,
+    }
+  ).value
+
+  const nonTaxes = ['Shipping', 'Items', 'Discounts']
+  let taxes: any = 0
+
+  totalizers?.forEach((item: { id: string; value: any }) => {
+    if (nonTaxes.indexOf(item.id) === -1) {
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      taxes += item.value
+    }
+  })
+
+  const summary = [
+    {
+      label: translateMessage({
+        id: 'store/orderquote.summary.subtotal',
+      }),
+      value: (
+        <FormattedCurrency value={subtotal === 0 ? subtotal : subtotal / 100} />
+      ),
+      isLoading: false,
+    },
+    {
+      label: translateMessage({
+        id: 'store/orderquote.summary.shipping',
+      }),
+      value: (
+        <FormattedCurrency
+          value={shippingCost === 0 ? shippingCost : shippingCost / 100}
+        />
+      ),
+      isLoading: false,
+    },
+    {
+      label: translateMessage({
+        id: 'store/orderquote.summary.discounts',
+      }),
+      value: (
+        <FormattedCurrency
+          value={discounts === 0 ? discounts : discounts / 100}
+        />
+      ),
+      isLoading: false,
+    },
+    {
+      label: translateMessage({
+        id: 'store/orderquote.summary.taxes',
+      }),
+      value: <FormattedCurrency value={taxes === 0 ? 0 : taxes / 100} />,
+      isLoading: false,
+    },
+    {
+      label: translateMessage({
+        id: 'store/orderquote.summary.total',
+      }),
+      value: <FormattedCurrency value={value === 0 ? 0 : value} />,
+      isLoading: false,
+    },
+  ]
 
   const activeLoading = (status: boolean) => {
     setState({ ..._state, savingQuote: status })
@@ -141,8 +222,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         orderForm?.items &&
         orderForm.items.length
       ) {
-        const { totalizers, value, customData, shippingData } = orderForm
-
         let address = null
 
         if (shippingData?.address) {
@@ -167,24 +246,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             street,
           }
         }
-
-        const subtotal = (
-          totalizers.find((x: { id: string }) => x.id === 'Items') || {
-            value: 0,
-          }
-        ).value
-
-        const discounts = (
-          totalizers.find((x: { id: string }) => x.id === 'Discounts') || {
-            value: 0,
-          }
-        ).value
-
-        const shippingCost = (
-          totalizers.find((x: { id: string }) => x.id === 'Shipping') || {
-            value: 0,
-          }
-        ).value
 
         const encodeCustomData = (data: any) => {
           if (data?.customApps?.length) {
@@ -224,10 +285,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           subtotal: parseInt(String(subtotal * 100), 0),
           discounts: parseInt(String(discounts), 0),
           shipping: parseInt(String(shippingCost * 100), 0),
+          taxes: parseInt(String(taxes * 100), 0),
           total: parseInt(String(value * 100), 0),
           customData: encodeCustomData(customData),
           address,
         }
+        console.log('Cart', cart)
 
         SaveCartMutation({
           variables: {
@@ -257,10 +320,9 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             toastMessage('store/orderquote.create.error')
             activeLoading(false)
           })
-      } else {
-        activeLoading(false)
-        toastMessage('store/orderquote.create.error')
       }
+      activeLoading(false)
+      toastMessage('store/orderquote.create.error')
     }
   }
 
@@ -381,6 +443,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                   setState({ ..._state, description: e.target.value })
                 }
                 value={description}
+                characterCountdownText={
+                  <FormattedMessage
+                    id="store/orderquote.create.characterLeft"
+                    values={{ count: _state.description.length }}
+                  />
+                }
                 maxLength="100"
                 rows="2"
               />
@@ -396,6 +464,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 items={itemsCopy}
                 density="high"
               />
+            </div>
+          </div>
+          <div className="flex flex-row ph5 ph7-ns">
+            <div
+              className={`flex flex-column w-100 mb5  ${handles.totalizerContainer}`}
+            >
+              <Totalizer items={summary} />
             </div>
           </div>
         </div>
@@ -414,6 +489,7 @@ interface MessageDescriptor {
   id: string
   description?: string | object
   defaultMessage?: string
+  values?: object
 }
 
 export default injectIntl(
