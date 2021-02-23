@@ -2,7 +2,7 @@
 import React from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
-import { Table, Button, PageHeader } from 'vtex.styleguide'
+import { Table, Button, PageHeader, PageBlock } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
 import { compose, graphql, useLazyQuery } from 'react-apollo'
 import PropTypes from 'prop-types'
@@ -146,12 +146,13 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div className={`${handles.containerList}`}>
+    <div className={`${handles.containerList} mw9 center`}>
       <PageHeader
         title={translateMessage({
           id: 'store/orderquote.list.title',
         })}
-      >
+      />
+      <div className="flex flex-row mv3">
         <span
           className={`mr3 ${handles.refreshButton} ${
             loading ? 'refreshLoading' : ''
@@ -179,7 +180,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         >
           <FormattedMessage id="store/orderquote.button.new" />
         </Button>
-      </PageHeader>
+      </div>
 
       <div className="flex flex-row ph5 ph7-ns">
         <div className="mb5 flex flex-column w-100">
