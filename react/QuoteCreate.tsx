@@ -349,7 +349,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div className={`${handles.containerCreate} pv6 ph4`}>
+    <div className={`${handles.containerCreate} pv6 ph4 mw9 center`}>
       <PageHeader
         title={translateMessage({
           id: 'store/orderquote.create.title',
@@ -376,8 +376,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
       {orderForm?.clientProfileData?.email && (
         <div>
-          <div className="flex flex-row ph5 ph7-ns">
-            <div className={`${handles.inputCreate} mb5 flex flex-column w-50`}>
+          <div className="flex flex-column ph5 ph7-ns">
+            <div className={`${handles.inputCreate} mb5 flex flex-column`}>
               <Input
                 placeholder={translateMessage({
                   id: 'store/orderquote.placeholder.quotationName',
@@ -392,39 +392,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                   setState({ ..._state, name: e.target.value })
                 }}
               />
-            </div>
-            <div
-              className={`${handles.buttonsContainer} mb5 flex flex-column w-50 items-end pt6`}
-            >
-              <div className="flex flex-row">
-                <div
-                  className={`flex flex-column w-70 pt4 ${handles.checkboxClear}`}
-                >
-                  <Checkbox
-                    checked={clearCart}
-                    id="clear"
-                    label={translateMessage({
-                      id: 'store/orderquote.button.clear',
-                    })}
-                    name="clearCheckbox"
-                    onChange={() => {
-                      setState({ ..._state, clearCart: !clearCart })
-                    }}
-                    value="option-0"
-                  />
-                </div>
-                <div className={`flex flex-column w-30 ${handles.buttonSave}`}>
-                  <Button
-                    variation="primary"
-                    isLoading={savingQuote}
-                    onClick={() => {
-                      saveQuote()
-                    }}
-                  >
-                    <FormattedMessage id="store/orderquote.button.save" />
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
           <div className="flex flex-row ph5 ph7-ns">
@@ -467,6 +434,39 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               className={`flex flex-column w-100 mb5  ${handles.totalizerContainer}`}
             >
               <Totalizer items={summary} />
+            </div>
+          </div>
+          <div
+            className={`${handles.buttonsContainer} mb5 flex flex-column items-end pt6`}
+          >
+            <div className="flex flex-row">
+              <div
+                className={`flex flex-column w-70 pt4 ${handles.checkboxClear}`}
+              >
+                <Checkbox
+                  checked={clearCart}
+                  id="clear"
+                  label={translateMessage({
+                    id: 'store/orderquote.button.clear',
+                  })}
+                  name="clearCheckbox"
+                  onChange={() => {
+                    setState({ ..._state, clearCart: !clearCart })
+                  }}
+                  value="option-0"
+                />
+              </div>
+              <div className={`flex flex-column w-30 ${handles.buttonSave}`}>
+                <Button
+                  variation="primary"
+                  isLoading={savingQuote}
+                  onClick={() => {
+                    saveQuote()
+                  }}
+                >
+                  <FormattedMessage id="store/orderquote.button.save" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

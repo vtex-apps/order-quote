@@ -378,7 +378,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div className={`${handles.containerView}`}>
+    <div className={`${handles.containerView}  mw9 center`}>
       <div className="noPrinting">
         <PageHeader
           title={translateMessage({
