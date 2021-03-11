@@ -65,7 +65,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }),
         width: 200,
       },
-      skuName: {
+      name: {
         title: translateMessage({
           id: 'store/orderquote.cartList.label.itemName',
         }),
@@ -84,6 +84,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             </span>
           )
         },
+        width: 200,
       },
       quantity: {
         title: translateMessage({
@@ -106,6 +107,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             </span>
           )
         },
+        width: 300,
       },
     },
   }
@@ -318,7 +320,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           })
       }
       activeLoading(false)
-      toastMessage('store/orderquote.create.error')
     }
   }
 
