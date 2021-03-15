@@ -1,5 +1,5 @@
 /* eslint-disable vtex/prefer-early-return */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { Table, Button, PageHeader, PageBlock } from 'vtex.styleguide'
@@ -8,11 +8,36 @@ import { compose, graphql, useLazyQuery } from 'react-apollo'
 import PropTypes from 'prop-types'
 import { useRuntime } from 'vtex.render-runtime'
 
+import { getSession } from './modules/session'
 import getCarts from './queries/getCarts.gql'
 import getOrderForm from './queries/orderForm.gql'
+import storageFactory from './utils/storage'
+
+const localStore = storageFactory(() => localStorage)
+
+const useSessionResponse = () => {
+  const [session, setSession] = useState()
+  const sessionPromise = getSession()
+
+  useEffect(() => {
+    if (!sessionPromise) {
+      return
+    }
+
+    sessionPromise.then((sessionResponse) => {
+      const { response } = sessionResponse
+
+      setSession(response)
+    })
+  }, [sessionPromise])
+
+  return session
+}
+
+let isAuthenticated =
+  JSON.parse(String(localStore.getItem('orderquote_isAuthenticated'))) ?? false
 
 const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
-  data: { orderForm },
   intl,
 }: any) => {
   const [getQuoteList, { data, loading, called }] = useLazyQuery(getCarts, {
@@ -21,6 +46,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   })
 
   const { navigate } = useRuntime()
+  const sessionResponse: any = useSessionResponse()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -29,13 +55,23 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const fetch = () => {
     getQuoteList({
       variables: {
-        email: orderForm.clientProfileData.email,
+        email: sessionResponse?.namespaces?.profile?.email?.value ?? null,
       },
     })
   }
 
-  if (orderForm?.clientProfileData?.email && !called) {
-    fetch()
+  if (sessionResponse) {
+    isAuthenticated =
+      sessionResponse?.namespaces?.profile?.isAuthenticated?.value === 'true'
+
+    localStore.setItem(
+      'orderquote_isAuthenticated',
+      JSON.stringify(isAuthenticated)
+    )
+
+    if (!called) {
+      fetch()
+    }
   }
 
   const defaultSchema = {
@@ -184,14 +220,12 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
       <div className="flex flex-row ph5 ph7-ns">
         <div className="mb5 flex flex-column w-100">
-          {orderForm &&
-            (!orderForm.clientProfileData ||
-              !orderForm.clientProfileData.email) && (
-              <div className={`mb5 ${handles.notAuthenticatedMessage}`}>
-                <FormattedMessage id="store/orderquote.error.notAuthenticated" />
-              </div>
-            )}
-          {orderForm?.clientProfileData?.email && data && (
+          {!isAuthenticated && (
+            <div className={`mb5 ${handles.notAuthenticatedMessage}`}>
+              <FormattedMessage id="store/orderquote.error.notAuthenticated" />
+            </div>
+          )}
+          {isAuthenticated && data && (
             <div className={`mb5 ${handles.listContainer}`}>
               <Table
                 fullWidth

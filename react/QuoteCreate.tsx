@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import {
   Input,
   Textarea,
@@ -18,10 +18,36 @@ import { useRuntime } from 'vtex.render-runtime'
 import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 
+import { getSession } from './modules/session'
 import saveCartMutation from './graphql/saveCart.graphql'
 import clearCartMutation from './graphql/clearCartMutation.graphql'
 import getOrderForm from './queries/orderForm.gql'
 import getSetupConfig from './graphql/getSetupConfig.graphql'
+import storageFactory from './utils/storage'
+
+const localStore = storageFactory(() => localStorage)
+
+const useSessionResponse = () => {
+  const [session, setSession] = useState()
+  const sessionPromise = getSession()
+
+  useEffect(() => {
+    if (!sessionPromise) {
+      return
+    }
+
+    sessionPromise.then((sessionResponse) => {
+      const { response } = sessionResponse
+
+      setSession(response)
+    })
+  }, [sessionPromise])
+
+  return session
+}
+
+let isAuthenticated =
+  JSON.parse(String(localStore.getItem('orderquote_isAuthenticated'))) ?? false
 
 const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   SaveCartMutation,
@@ -40,6 +66,17 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const { navigate } = useRuntime()
 
   const { showToast } = useContext(ToastContext)
+  const sessionResponse: any = useSessionResponse()
+
+  if (sessionResponse) {
+    isAuthenticated =
+      sessionResponse?.namespaces?.profile?.isAuthenticated?.value === 'true'
+
+    localStore.setItem(
+      'orderquote_isAuthenticated',
+      JSON.stringify(isAuthenticated)
+    )
+  }
 
   const { name, description, savingQuote, errorMessage, clearCart } = _state
 
@@ -209,7 +246,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }
 
   const handleSaveCart = () => {
-    if (!orderForm?.clientProfileData?.email) {
+    if (!isAuthenticated) {
       toastMessage('store/orderquote.error.notAuthenticated')
     } else {
       activeLoading(true)
@@ -261,7 +298,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
         const cart = {
           id: null,
-          email: orderForm.clientProfileData.email,
+          email: sessionResponse.namespaces.profile.email.value,
           cartName: name,
           description,
           items: orderForm.items.map((item: any) => {
@@ -364,7 +401,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }}
       />
 
-      {orderForm && !orderForm?.clientProfileData?.email && (
+      {!isAuthenticated && (
         <div className="flex flex-row ph5 ph7-ns">
           <div className="flex flex-column w-100">
             <div className={`mb5 ${handles.notAuthenticatedMessage}`}>
@@ -374,7 +411,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         </div>
       )}
 
-      {orderForm?.clientProfileData?.email && (
+      {isAuthenticated && (
         <div>
           <div className="flex flex-column ph5 ph7-ns">
             <div className={`${handles.inputCreate} mb5 flex flex-column`}>

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Loading Quotes based on the logged user, not from the orderForm
 ## [1.5.0] - 2021-02-24
 
 ## [1.4.0] - 2021-02-03
