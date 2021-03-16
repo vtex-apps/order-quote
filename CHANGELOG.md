@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Create quote, remove unwanted error toast message
 
+## [1.5.1] - 2021-03-15
+
+### Changed
+
+- Loading Quotes based on the logged user, not from the orderForm
 ## [1.5.0] - 2021-02-24
 
 ## [1.4.0] - 2021-02-03
