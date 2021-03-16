@@ -308,6 +308,16 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         title: translateMessage({
           id: 'store/orderquote.cartList.label.itemName',
         }),
+        // eslint-disable-next-line react/display-name
+        cellRenderer: ({ rowData }: any) => {
+          return rowData.skuName !== rowData.name ? (
+            <div>
+              <span>{rowData.name}</span>
+            </div>
+          ) : (
+            rowData.skuName
+          )
+        },
         minWidth: 300,
       },
       sellingPrice: {
@@ -325,6 +335,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             </span>
           )
         },
+        width: 200,
       },
       quantity: {
         title: translateMessage({
@@ -348,6 +359,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             </span>
           )
         },
+        width: 300,
       },
     },
   }
@@ -555,7 +567,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               schema={defaultSchema}
               items={quoteList.items}
               loading={loading}
-              density="high"
+              density="medium"
             />
             <div className={`mt5 ${handles.totalizerContainer}`}>
               <Totalizer items={summary} />
