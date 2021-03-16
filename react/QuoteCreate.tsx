@@ -49,6 +49,20 @@ const useSessionResponse = () => {
 let isAuthenticated =
   JSON.parse(String(localStore.getItem('orderquote_isAuthenticated'))) ?? false
 
+const CSS_HANDLES = [
+  'containerCreate',
+  'inputCreate',
+  'buttonsContainer',
+  'checkboxClear',
+  'buttonSave',
+  'listContainer',
+  'descriptionContainer',
+  'notAuthenticatedMessage',
+  'itemNameContainer',
+  'itemName',
+  'itemSkuName',
+] as const
+
 const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   SaveCartMutation,
   ClearCartMutation,
@@ -67,6 +81,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const { showToast } = useContext(ToastContext)
   const sessionResponse: any = useSessionResponse()
+  const handles = useCssHandles(CSS_HANDLES)
 
   if (sessionResponse) {
     isAuthenticated =
@@ -109,8 +124,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return rowData.skuName !== rowData.name ? (
-            <div>
-              <span>{rowData.name}</span>
+            <div className={handles.itemNameContainer}>
+              <span className={handles.itemName}>{rowData.name}</span>
+              <br />
+              <span className={`t-mini ${handles.itemSkuName}`}>
+                {rowData.skuName}
+              </span>
             </div>
           ) : (
             rowData.skuName
@@ -382,19 +401,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       handleSaveCart()
     }
   }
-
-  const CSS_HANDLES = [
-    'containerCreate',
-    'inputCreate',
-    'buttonsContainer',
-    'checkboxClear',
-    'buttonSave',
-    'listContainer',
-    'descriptionContainer',
-    'notAuthenticatedMessage',
-  ] as const
-
-  const handles = useCssHandles(CSS_HANDLES)
 
   return (
     <div className={`${handles.containerCreate} pv6 ph4 mw9 center`}>
