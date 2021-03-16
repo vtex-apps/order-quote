@@ -304,10 +304,20 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }),
         width: 150,
       },
-      name: {
+      skuName: {
         title: translateMessage({
           id: 'store/orderquote.cartList.label.itemName',
         }),
+        // eslint-disable-next-line react/display-name
+        cellRenderer: ({ rowData }: any) => {
+          return rowData.skuName !== rowData.name ? (
+            <div className="flex flex-wrap">
+              <span>{rowData.name}</span>
+            </div>
+          ) : (
+            rowData.skuName
+          )
+        },
         minWidth: 300,
       },
       sellingPrice: {
