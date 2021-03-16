@@ -65,6 +65,9 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 | `notAuthenticatedMessage` |
 | `printingArea`            |
 | `totalizerContainer`      |
+| `itemNameContainer`       |
+| `itemName`                |
+| `itemSkuName`             |
 
 <!-- DOCS-IGNORE:start -->
 

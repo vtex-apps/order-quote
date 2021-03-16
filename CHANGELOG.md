@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed cart items table in create quote and view quote to display `name` instead of `skuName`
 
+### Added
+- New css handles `itemNameContainer`, `itemName` and `itemSkuName`
+
 ### Fixed
 
 - Create quote, remove unwanted error toast message

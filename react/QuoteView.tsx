@@ -33,6 +33,23 @@ const DEFAULT_ADMIN_SETUP = {
   storeLogoUrl: '',
 }
 
+const CSS_HANDLES = [
+  'containerView',
+  'buttonDelete',
+  'buttonPrint',
+  'buttonContainerView',
+  'buttonUse',
+  'printingArea',
+  'containerFields',
+  'field',
+  'listContainer',
+  'totalizerContainer',
+  'logo',
+  'itemNameContainer',
+  'itemName',
+  'itemSkuName',
+] as const
+
 const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   GetCart,
   GetSetupConfig,
@@ -108,6 +125,8 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const {
     route: { params },
   } = useRuntime()
+
+  const handles = useCssHandles(CSS_HANDLES)
 
   const {
     savingQuote,
@@ -311,8 +330,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return rowData.skuName !== rowData.name ? (
-            <div>
-              <span>{rowData.name}</span>
+            <div className={handles.itemNameContainer}>
+              <span className={handles.itemName}>{rowData.name}</span>
+              <br />
+              <span className={`t-mini ${handles.itemSkuName}`}>
+                {rowData.skuName}
+              </span>
             </div>
           ) : (
             rowData.skuName
@@ -372,22 +395,6 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       year: 'numeric',
     })
   }
-
-  const CSS_HANDLES = [
-    'containerView',
-    'buttonDelete',
-    'buttonPrint',
-    'buttonContainerView',
-    'buttonUse',
-    'printingArea',
-    'containerFields',
-    'field',
-    'listContainer',
-    'totalizerContainer',
-    'logo',
-  ] as const
-
-  const handles = useCssHandles(CSS_HANDLES)
 
   return (
     <div className={`${handles.containerView}  mw9 center`}>
