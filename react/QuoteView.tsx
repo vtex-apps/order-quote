@@ -311,7 +311,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return rowData.skuName !== rowData.name ? (
-            <div className="flex flex-wrap">
+            <div>
               <span>{rowData.name}</span>
             </div>
           ) : (
@@ -567,7 +567,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               schema={defaultSchema}
               items={quoteList.items}
               loading={loading}
-              density="high"
+              density="medium"
             />
             <div className={`mt5 ${handles.totalizerContainer}`}>
               <Totalizer items={summary} />

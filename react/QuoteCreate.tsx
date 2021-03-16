@@ -72,7 +72,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return rowData.skuName !== rowData.name ? (
-            <div className="flex flex-wrap">
+            <div>
               <span>{rowData.name}</span>
             </div>
           ) : (
