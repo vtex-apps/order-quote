@@ -1,4 +1,5 @@
-import { ExternalClient, InstanceOptions, IOContext } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
+import { ExternalClient } from '@vtex/api'
 
 export default class RequestHub extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {

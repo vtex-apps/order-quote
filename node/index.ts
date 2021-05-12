@@ -1,11 +1,10 @@
-import {
+import type {
   ClientsConfig,
-  LRUCache,
-  Service,
   ServiceContext,
   ParamsContext,
   RecorderState,
 } from '@vtex/api'
+import { LRUCache, Service } from '@vtex/api'
 
 import { Clients } from './clients'
 import { resolvers } from './graphql'

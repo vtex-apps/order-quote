@@ -1,4 +1,33 @@
-import { SessionPromise } from 'vtex.render-runtime'
+interface KeyValue {
+  value: string
+}
+
+interface Session {
+  id: string
+  namespaces: {
+    store: {
+      channel: string
+    }
+    profile: {
+      isAuthenticated: KeyValue
+      email?: KeyValue
+    }
+  }
+}
+
+interface SessionUnauthorized {
+  type: 'Unauthorized'
+  message: string
+}
+
+interface SessionForbidden {
+  type: 'Forbidden'
+  message: string
+}
+
+interface SessionPromise {
+  response: Session | SessionUnauthorized | SessionForbidden
+}
 
 export function getSession() {
   return window &&

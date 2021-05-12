@@ -12,23 +12,21 @@ import {
   PageHeader,
 } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
-import { compose, graphql } from 'react-apollo'
+import { useQuery, useMutation } from 'react-apollo'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { useRuntime } from 'vtex.render-runtime'
-import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
-import PropTypes from 'prop-types'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import { getSession } from './modules/session'
 import saveCartMutation from './graphql/saveCart.graphql'
 import clearCartMutation from './graphql/clearCartMutation.graphql'
 import getOrderForm from './queries/orderForm.gql'
-import getSetupConfig from './graphql/getSetupConfig.graphql'
 import storageFactory from './utils/storage'
 
 const localStore = storageFactory(() => localStorage)
 
 const useSessionResponse = () => {
-  const [session, setSession] = useState()
+  const [session, setSession] = useState<any>()
   const sessionPromise = getSession()
 
   useEffect(() => {
@@ -61,14 +59,10 @@ const CSS_HANDLES = [
   'itemNameContainer',
   'itemName',
   'itemSkuName',
+  'totalizerContainer',
 ] as const
 
-const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
-  SaveCartMutation,
-  ClearCartMutation,
-  intl,
-  data: { orderForm },
-}: any) => {
+const QuoteCreate: StorefrontFunctionComponent = () => {
   const [_state, setState] = useState<any>({
     name: '',
     description: '',
@@ -77,11 +71,21 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     clearCart: false,
   })
 
+  const { formatMessage } = useIntl()
   const { navigate } = useRuntime()
 
   const { showToast } = useContext(ToastContext)
   const sessionResponse: any = useSessionResponse()
   const handles = useCssHandles(CSS_HANDLES)
+
+  const {
+    data: { orderForm },
+  } = useQuery(getOrderForm, {
+    ssr: false,
+  })
+
+  const [SaveCartMutation] = useMutation(saveCartMutation)
+  const [ClearCartMutation] = useMutation(clearCartMutation)
 
   if (sessionResponse) {
     isAuthenticated =
@@ -96,7 +100,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const { name, description, savingQuote, errorMessage, clearCart } = _state
 
   const translateMessage = (message: MessageDescriptor) => {
-    return intl.formatMessage(message)
+    return formatMessage(message)
   }
 
   const toastMessage = (messsageKey: string) => {
@@ -300,6 +304,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             state,
             street,
           } = shippingData.address
+
           address = {
             city,
             complement,
@@ -324,6 +329,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               }),
             }
           }
+
           return null
         }
 
@@ -340,18 +346,18 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
               id: item.id,
               productId: item.productId,
               imageUrl: item.imageUrl,
-              listPrice: parseInt(String(item.listPrice * 100), 0),
-              price: parseInt(String(item.price * 100), 0),
+              listPrice: parseInt(String(item.listPrice * 100), 10),
+              price: parseInt(String(item.price * 100), 10),
               quantity: item.quantity,
-              sellingPrice: parseInt(String(item.sellingPrice * 100), 0),
+              sellingPrice: parseInt(String(item.sellingPrice * 100), 10),
             }
           }),
           creationDate: new Date().toISOString(),
-          subtotal: parseInt(String(subtotal * 100), 0),
-          discounts: parseInt(String(discounts), 0),
-          shipping: parseInt(String(shippingCost * 100), 0),
-          taxes: parseInt(String(taxes * 100), 0),
-          total: parseInt(String(value * 100), 0),
+          subtotal: parseInt(String(subtotal * 100), 10),
+          discounts: parseInt(String(discounts), 10),
+          shipping: parseInt(String(shippingCost * 100), 10),
+          taxes: parseInt(String(taxes * 100), 10),
+          total: parseInt(String(value * 100), 10),
           customData: encodeCustomData(customData),
           address,
         }
@@ -385,6 +391,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
             activeLoading(false)
           })
       }
+
       activeLoading(false)
     }
   }
@@ -529,37 +536,11 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   )
 }
 
-QuoteCreate.propTypes = {
-  SaveCartMutation: PropTypes.func,
-  GetSetupConfig: PropTypes.object,
-  data: PropTypes.object,
-}
-
 interface MessageDescriptor {
   id: string
-  description?: string | object
+  description?: string | Record<string, unknown>
   defaultMessage?: string
-  values?: object
+  values?: Record<string, unknown>
 }
 
-export default injectIntl(
-  compose(
-    graphql(getOrderForm, {
-      options: {
-        ssr: false,
-      },
-    }),
-    graphql(saveCartMutation, {
-      name: 'SaveCartMutation',
-      options: { ssr: false },
-    }),
-    graphql(clearCartMutation, {
-      name: 'ClearCartMutation',
-      options: { ssr: false },
-    }),
-    graphql(getSetupConfig, {
-      name: 'GetSetupConfig',
-      options: { ssr: false },
-    })
-  )(QuoteCreate)
-)
+export default QuoteCreate

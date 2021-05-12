@@ -1,22 +1,19 @@
-/* eslint-disable vtex/prefer-early-return */
 import React, { useState, useEffect } from 'react'
-import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 import { FormattedCurrency } from 'vtex.format-currency'
-import { Table, Button, PageHeader, PageBlock } from 'vtex.styleguide'
+import { Table, Button, PageHeader } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
-import { compose, graphql, useLazyQuery } from 'react-apollo'
-import PropTypes from 'prop-types'
+import { useLazyQuery } from 'react-apollo'
 import { useRuntime } from 'vtex.render-runtime'
 
 import { getSession } from './modules/session'
 import getCarts from './queries/getCarts.gql'
-import getOrderForm from './queries/orderForm.gql'
 import storageFactory from './utils/storage'
 
 const localStore = storageFactory(() => localStorage)
 
 const useSessionResponse = () => {
-  const [session, setSession] = useState()
+  const [session, setSession] = useState<unknown>()
   const sessionPromise = getSession()
 
   useEffect(() => {
@@ -37,9 +34,8 @@ const useSessionResponse = () => {
 let isAuthenticated =
   JSON.parse(String(localStore.getItem('orderquote_isAuthenticated'))) ?? false
 
-const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
-  intl,
-}: any) => {
+const QuoteList: StorefrontFunctionComponent = () => {
+  const { formatMessage, formatDate } = useIntl()
   const [getQuoteList, { data, loading, called }] = useLazyQuery(getCarts, {
     fetchPolicy: 'no-cache',
     partialRefetch: true,
@@ -49,7 +45,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   const sessionResponse: any = useSessionResponse()
 
   const translateMessage = (message: MessageDescriptor) => {
-    return intl.formatMessage(message)
+    return formatMessage(message)
   }
 
   const fetch = () => {
@@ -91,6 +87,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
           const discount = cellData === 0 ? cellData : cellData / 100
+
           return (
             <span className="tr w-100">
               <FormattedCurrency value={discount} />
@@ -107,6 +104,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
           const newCellData = cellData === 0 ? cellData : cellData / 100
+
           return (
             <span className="tr w-100">
               <FormattedCurrency
@@ -125,6 +123,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ cellData }: any) => {
           const newCellData = cellData === 0 ? cellData : cellData / 100
+
           return (
             <span className="tr w-100">
               <FormattedCurrency
@@ -160,7 +159,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ cellData }: any) => {
           return (
             <span className="tr w-100">
-              {intl.formatDate(cellData, {
+              {formatDate(cellData, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -179,6 +178,7 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     'listContainer',
     'notAuthenticatedMessage',
   ] as const
+
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
@@ -247,20 +247,10 @@ const QuoteList: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   )
 }
 
-QuoteList.propTypes = {
-  data: PropTypes.object,
-}
-
 interface MessageDescriptor {
   id: string
-  description?: string | object
+  description?: string | Record<string, unknown>
   defaultMessage?: string
 }
 
-export default injectIntl(
-  compose(
-    graphql(getOrderForm, {
-      options: { ssr: false },
-    })
-  )(QuoteList)
-)
+export default QuoteList

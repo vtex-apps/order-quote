@@ -10,13 +10,12 @@ import {
   PageHeader,
 } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
-import { useQuery, compose, graphql } from 'react-apollo'
+import { useQuery, useMutation } from 'react-apollo'
 import { FormattedCurrency } from 'vtex.format-currency'
 import { useRuntime } from 'vtex.render-runtime'
 import OrderFormQuery from 'vtex.checkout-resources/QueryOrderForm'
-import { OrderForm } from 'vtex.checkout-graphql'
-import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl'
-import PropTypes from 'prop-types'
+import type { OrderForm } from 'vtex.checkout-graphql'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import PrintButton from './PrintButton'
 import getCart from './graphql/getCart.graphql'
@@ -50,17 +49,12 @@ const CSS_HANDLES = [
   'itemSkuName',
 ] as const
 
-const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
-  GetCart,
-  GetSetupConfig,
-  UseCart,
-  RemoveCart,
-  intl,
-}: any) => {
+const QuoteCreate: StorefrontFunctionComponent = () => {
+  const { formatDate, formatMessage } = useIntl()
   const { navigate } = useRuntime()
 
   const translateMessage = (message: MessageDescriptor) => {
-    return intl.formatMessage(message)
+    return formatMessage(message)
   }
 
   const {
@@ -72,6 +66,12 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   }>(OrderFormQuery, {
     ssr: false,
   })
+
+  const { data: GetSetupConfig } = useQuery(getSetupConfig, { ssr: false })
+
+  const [GetCart] = useMutation(getCart)
+  const [UseCart] = useMutation(useCart)
+  const [RemoveCart] = useMutation(removeCart)
 
   const [_state, setState] = useState<any>({
     savingQuote: false,
@@ -189,6 +189,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         }),
       }
     }
+
     return null
   }
 
@@ -247,6 +248,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         const newSubtotal = subtotal === 0 ? subtotal : subtotal / 100
         const newTaxes = taxes === 0 ? taxes : taxes / 100
         const newShipping = shipping === 0 ? shipping : shipping / 100
+
         setState({
           ..._state,
           expires: exp,
@@ -374,6 +376,7 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           const itemTotal = rowData.sellingPrice * rowData.quantity
+
           return (
             <span className="tr w-100">
               <FormattedCurrency
@@ -387,9 +390,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     },
   }
 
-  const formatDate = (date: string) => {
+  const translateDate = (date: string) => {
     const tempDate = new Date(date)
-    return intl.formatDate(tempDate, {
+
+    return formatDate(tempDate, {
       day: 'numeric',
       month: 'numeric',
       year: 'numeric',
@@ -484,13 +488,13 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
                 <span className="b">
                   <FormattedMessage id="store/orderquote.view.label.creationDate" />
                 </span>
-                : {formatDate(quoteList.creationDate)}
+                : {translateDate(quoteList.creationDate)}
               </div>
               <div className={`mb2 ${handles.field}`}>
                 <span className="b">
                   <FormattedMessage id="store/orderquote.view.label.expirationDate" />
                 </span>
-                : {formatDate(expires)}
+                : {translateDate(expires)}
               </div>
               {/* {!!quoteList.customData && (
                 <div className={`mb4 ${handles.field}`}>
@@ -610,37 +614,10 @@ const QuoteCreate: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   )
 }
 
-QuoteCreate.propTypes = {
-  SaveCartMutation: PropTypes.func,
-  GetSetupConfig: PropTypes.object,
-  GetCart: PropTypes.func,
-  RemoveCart: PropTypes.func,
-  UseCart: PropTypes.func,
-}
-
 interface MessageDescriptor {
   id: string
-  description?: string | object
+  description?: string | Record<string, unknown>
   defaultMessage?: string
 }
 
-export default injectIntl(
-  compose(
-    graphql(removeCart, {
-      name: 'RemoveCart',
-      options: { ssr: false },
-    }),
-    graphql(getCart, {
-      name: 'GetCart',
-      options: { ssr: false },
-    }),
-    graphql(getSetupConfig, {
-      name: 'GetSetupConfig',
-      options: { ssr: false },
-    }),
-    graphql(useCart, {
-      name: 'UseCart',
-      options: { ssr: false },
-    })
-  )(QuoteCreate)
-)
+export default QuoteCreate

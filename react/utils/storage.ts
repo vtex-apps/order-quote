@@ -4,8 +4,10 @@ export default function storageFactory(getStorage: () => Storage): Storage {
   function isSupported() {
     try {
       const testKey = '__some_random_key_you_are_not_going_to_use__'
+
       getStorage().setItem(testKey, testKey)
       getStorage().removeItem(testKey)
+
       return true
     } catch (e) {
       return false
@@ -24,10 +26,12 @@ export default function storageFactory(getStorage: () => Storage): Storage {
     if (isSupported()) {
       return getStorage().getItem(name)
     }
+
     // eslint-disable-next-line no-prototype-builtins
     if (inMemoryStorage.hasOwnProperty(name)) {
       return inMemoryStorage[name]
     }
+
     return null
   }
 
@@ -35,6 +39,7 @@ export default function storageFactory(getStorage: () => Storage): Storage {
     if (isSupported()) {
       return getStorage().key(index)
     }
+
     return Object.keys(inMemoryStorage)[index] || null
   }
 
@@ -58,6 +63,7 @@ export default function storageFactory(getStorage: () => Storage): Storage {
     if (isSupported()) {
       return getStorage().length
     }
+
     return Object.keys(inMemoryStorage).length
   }
 

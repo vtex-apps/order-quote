@@ -117,7 +117,7 @@ const defaultHeaders = (authToken: string) => ({
 
 export const resolvers = {
   Query: {
-    getSetupConfig: async (_: any, __: any, ctx: any) => {
+    getSetupConfig: async (_: any, __: any, ctx: Context) => {
       const {
         vtex: { account, authToken },
         clients: { hub, apps },
@@ -179,7 +179,7 @@ export const resolvers = {
 
       return settings
     },
-    getCarts: async (_: any, params: any, ctx: any) => {
+    getCarts: async (_: any, params: any, ctx: Context) => {
       const {
         vtex: ioContext,
         clients: { hub },
@@ -202,7 +202,7 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
@@ -212,7 +212,7 @@ export const resolvers = {
     },
   },
   Mutation: {
-    clearCart: async (_: any, params: any, ctx: any) => {
+    clearCart: async (_: any, params: any, ctx: Context) => {
       const {
         vtex: ioContext,
         clients: { hub },
@@ -228,12 +228,12 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
     },
-    useCart: async (_: any, params: any, ctx: any) => {
+    useCart: async (_: any, params: any, ctx: Context) => {
       const {
         vtex: ioContext,
         clients: { hub },
@@ -308,7 +308,7 @@ export const resolvers = {
           logger.error(err)
         }
 
-        if (params.customData && params.customData.customApps.length) {
+        if (params.customData?.customApps.length) {
           await Promise.all(
             params.customData.customApps.map(
               (app: { id: string; fields: any }) =>
@@ -323,18 +323,18 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
     },
-    orderQuote: async (_: any, params: any, ctx: any) => {
+    orderQuote: async (_: any, params: any, ctx: Context) => {
       const {
-        vtex: { authToken },
+        // vtex: { authToken },
         clients: { masterdata },
       } = ctx
 
-      const headers = defaultHeaders(authToken)
+      // const headers = defaultHeaders(authToken)
 
       try {
         const data = await masterdata
@@ -342,10 +342,10 @@ export const resolvers = {
             {
               dataEntity: 'cart',
               fields: params.cart,
-            },
-            {
-              options: { headers },
             }
+            // {
+            //   options: { headers },
+            // }
           )
           .then((res: any) => res)
 
@@ -353,13 +353,13 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
     },
 
-    getCarts: async (_: any, params: any, ctx: any) => {
+    getCarts: async (_: any, params: any, ctx: Context) => {
       const {
         vtex: ioContext,
         clients: { hub },
@@ -382,13 +382,13 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
     },
 
-    getCart: async (_: any, params: any, ctx: any) => {
+    getCart: async (_: any, params: any, ctx: Context) => {
       const {
         vtex: ioContext,
         clients: { hub },
@@ -410,13 +410,13 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
     },
 
-    removeCart: async (_: any, params: any, ctx: any) => {
+    removeCart: async (_: any, params: any, ctx: Context) => {
       const {
         clients: { masterdata },
       } = ctx
@@ -435,7 +435,7 @@ export const resolvers = {
       } catch (e) {
         if (e.message) {
           throw new GraphQLError(e.message)
-        } else if (e.response && e.response.data && e.response.data.message) {
+        } else if (e.response?.data?.message) {
           throw new GraphQLError(e.response.data.message)
         }
       }
