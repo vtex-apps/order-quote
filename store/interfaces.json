@@ -1,20 +1,14 @@
 {
-  "store.orderquote": {
-    "required": ["orderquote"]
+  "store.order-quote": {
+    "required": ["quotes-table"]
   },
-  "orderquote": {
-    "component": "QuoteList"
+  "quotes-table": {
+    "component": "QuotesTable"
   },
-  "store.create": {
-    "required": ["create"]
+  "store.create-quote": {
+    "required": ["create-quote"]
   },
-  "create": {
-    "component": "QuoteCreate"
-  },
-  "store.view": {
-    "required": ["view"]
-  },
-  "view": {
-    "component": "QuoteView"
+  "create-quote": {
+    "component": "CreateQuote"
   }
 }

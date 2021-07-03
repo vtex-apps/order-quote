@@ -14,6 +14,7 @@ declare module 'vtex.styleguide' {
   export const IconCheck
   export const Input
   export const InputButton
+  export const InputCurrency
   export const InputSearch
   export const IconCaretDown
   export const IconCaretUp
@@ -46,4 +47,5 @@ declare module 'vtex.styleguide' {
   export const Divider
   export const ModalDialog
   export const PageBlock
+  export const Slider
 }

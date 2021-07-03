@@ -1,0 +1,3 @@
+mutation useQuote($id: String, $orderFormId: String) {
+  useQuote(id: $id, orderFormId: $orderFormId)
+}

@@ -1,0 +1,35 @@
+query getQuote($id: String) @context(scope: "private") {
+  getQuote(id: $id) {
+    id
+    referenceName
+    creatorEmail
+    creatorRole
+    creationDate
+    expirationDate
+    lastUpdate
+    updateHistory {
+      email
+      role
+      date
+      status
+      note
+    }
+    items {
+      name
+      skuName
+      refId
+      id
+      productId
+      imageUrl
+      listPrice
+      price
+      quantity
+      sellingPrice
+      seller
+    }
+    subtotal
+    status
+    organization
+    costCenter
+  }
+}

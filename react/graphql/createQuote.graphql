@@ -1,0 +1,15 @@
+mutation createQuote(
+  $referenceName: String
+  $items: [CartItem]
+  $subtotal: Float
+  $note: String
+  $sendToSalesRep: Boolean
+) {
+  createQuote(
+    referenceName: $referenceName
+    items: $items
+    subtotal: $subtotal
+    note: $note
+    sendToSalesRep: $sendToSalesRep
+  )
+}

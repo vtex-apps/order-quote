@@ -1,17 +1,81 @@
 {
   "properties": {
-    "email": { "type": "string", "title": "Email" },
-    "cartName": { "type": "string", "title": "Cart Name" },
-    "description": { "type": ["null", "string"], "title": "Cart Name" },
-    "status": { "type": ["null", "string"], "title": "Cart Name" },
-    "items": { "type": "array", "title": "Cart" },
+    "referenceName": {
+      "type": "string",
+      "title": "Reference Name"
+    },
+    "creatorEmail": {
+      "type": "string",
+      "title": "Creator Email"
+    },
+    "creatorRole": {
+      "type": "string",
+      "title": "Creator Role"
+    },
     "creationDate": {
       "type": "string",
-      "title": "Creation Date",
-      "format": "date-time"
+      "title": "Creation Date"
+    },
+    "expirationDate": {
+      "type": "string",
+      "title": "Expiration Date"
+    },
+    "lastUpdate": {
+      "type": "string",
+      "title": "Last Update"
+    },
+    "updateHistory": {
+      "type": "array",
+      "title": "Update History"
+    },
+    "items": {
+      "type": "array",
+      "title": "Cart"
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status"
+    },
+    "organization": {
+      "type": ["null", "string"],
+      "title": "Organization"
+    },
+    "costCenter": {
+      "type": ["null", "string"],
+      "title": "Cost Center"
+    },
+    "viewedBySales": {
+      "type": "boolean",
+      "title": "Viewed by Sales"
+    },
+    "viewedByCustomer": {
+      "type": "boolean",
+      "title": "Viewed by Customer"
     }
   },
-  "v-indexed": ["email", "creationDate", "cartName"],
-  "v-default-fields": ["email", "cartName", "items", "creationDate"],
+  "v-indexed": [
+    "creatorEmail",
+    "creationDate",
+    "expirationDate",
+    "lastUpdate",
+    "referenceName",
+    "status",
+    "organization",
+    "costCenter"
+  ],
+  "v-default-fields": [
+    "referenceName",
+    "creatorEmail",
+    "creationDate",
+    "expirationDate",
+    "lastUpdate",
+    "items",
+    "subtotal",
+    "status"
+  ],
   "v-cache": false
 }

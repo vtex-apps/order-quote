@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useContext, useEffect } from 'react'
 import {
   Input,
@@ -8,7 +7,6 @@ import {
   Table,
   Totalizer,
   ToastContext,
-  Checkbox,
   PageHeader,
 } from 'vtex.styleguide'
 import { useCssHandles } from 'vtex.css-handles'
@@ -17,11 +15,11 @@ import { FormattedCurrency } from 'vtex.format-currency'
 import { useRuntime } from 'vtex.render-runtime'
 import { useIntl, FormattedMessage } from 'react-intl'
 
-import { getSession } from './modules/session'
-import saveCartMutation from './graphql/saveCart.graphql'
-import clearCartMutation from './graphql/clearCartMutation.graphql'
-import getOrderForm from './queries/orderForm.gql'
-import storageFactory from './utils/storage'
+import { getSession } from '../modules/session'
+import saveCartMutation from '../graphql/createQuote.graphql'
+import clearCartMutation from '../graphql/clearCartMutation.graphql'
+import getOrderForm from '../queries/orderForm.gql'
+import storageFactory from '../utils/storage'
 
 const localStore = storageFactory(() => localStorage)
 
@@ -51,8 +49,9 @@ const CSS_HANDLES = [
   'containerCreate',
   'inputCreate',
   'buttonsContainer',
-  'checkboxClear',
-  'buttonSave',
+  'noteContainer',
+  'buttonSaveQuote',
+  'buttonRequestQuote',
   'listContainer',
   'descriptionContainer',
   'notAuthenticatedMessage',
@@ -63,12 +62,11 @@ const CSS_HANDLES = [
 ] as const
 
 const QuoteCreate: StorefrontFunctionComponent = () => {
-  const [_state, setState] = useState<any>({
+  const [_state, setState] = useState({
     name: '',
-    description: '',
+    note: '',
     errorMessage: '',
     savingQuote: false,
-    clearCart: false,
   })
 
   const { formatMessage } = useIntl()
@@ -78,14 +76,15 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
   const sessionResponse: any = useSessionResponse()
   const handles = useCssHandles(CSS_HANDLES)
 
-  const {
-    data: { orderForm },
-  } = useQuery(getOrderForm, {
+  const { data } = useQuery(getOrderForm, {
     ssr: false,
   })
 
   const [SaveCartMutation] = useMutation(saveCartMutation)
   const [ClearCartMutation] = useMutation(clearCartMutation)
+
+  if (!data?.orderForm) return null
+  const { orderForm } = data
 
   if (sessionResponse) {
     isAuthenticated =
@@ -97,7 +96,7 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
     )
   }
 
-  const { name, description, savingQuote, errorMessage, clearCart } = _state
+  const { name, note, savingQuote, errorMessage } = _state
 
   const translateMessage = (message: MessageDescriptor) => {
     return formatMessage(message)
@@ -162,7 +161,7 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
         }),
         width: 100,
       },
-      id: {
+      total: {
         title: translateMessage({
           id: 'store/orderquote.cartList.label.total',
         }),
@@ -183,7 +182,7 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
   }
 
   let itemsCopy: any = orderForm?.items ? orderForm.items : []
-  const { totalizers, value, customData, shippingData } = orderForm ?? {}
+  const { totalizers } = orderForm ?? {}
 
   const subtotal = (
     totalizers?.find((x: { id: string }) => x.id === 'Items') || {
@@ -191,27 +190,13 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
     }
   ).value
 
-  const discounts = (
-    totalizers?.find((x: { id: string }) => x.id === 'Discounts') || {
-      value: 0,
-    }
-  ).value
-
-  const shippingCost = (
-    totalizers?.find((x: { id: string }) => x.id === 'Shipping') || {
-      value: 0,
-    }
-  ).value
-
-  const nonTaxes = ['Shipping', 'Items', 'Discounts']
-  let taxes: any = 0
-
-  totalizers?.forEach((item: { id: string; value: any }) => {
-    if (nonTaxes.indexOf(item.id) === -1) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      taxes += item.value
-    }
-  })
+  // TODO: Capture order-level discounts
+  //
+  //   const discounts = (
+  //     totalizers?.find((x: { id: string }) => x.id === 'Discounts') || {
+  //       value: 0,
+  //     }
+  //   ).value
 
   const summary = [
     {
@@ -221,42 +206,6 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
       value: (
         <FormattedCurrency value={subtotal === 0 ? subtotal : subtotal / 100} />
       ),
-      isLoading: false,
-    },
-    {
-      label: translateMessage({
-        id: 'store/orderquote.summary.shipping',
-      }),
-      value: (
-        <FormattedCurrency
-          value={shippingCost === 0 ? shippingCost : shippingCost / 100}
-        />
-      ),
-      isLoading: false,
-    },
-    {
-      label: translateMessage({
-        id: 'store/orderquote.summary.discounts',
-      }),
-      value: (
-        <FormattedCurrency
-          value={discounts === 0 ? discounts : discounts / 100}
-        />
-      ),
-      isLoading: false,
-    },
-    {
-      label: translateMessage({
-        id: 'store/orderquote.summary.taxes',
-      }),
-      value: <FormattedCurrency value={taxes === 0 ? 0 : taxes / 100} />,
-      isLoading: false,
-    },
-    {
-      label: translateMessage({
-        id: 'store/orderquote.summary.total',
-      }),
-      value: <FormattedCurrency value={value === 0 ? 0 : value} />,
       isLoading: false,
     },
   ]
@@ -273,14 +222,14 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
     }).then(() => {
       itemsCopy = null
       navigate({
-        page: 'store.orderquote',
+        page: 'store.order-quote',
         fallbackToWindowLocation: true,
         fetchPage: true,
       })
     })
   }
 
-  const handleSaveCart = () => {
+  const handleSaveCart = (sendToSalesRep: boolean) => {
     if (!isAuthenticated) {
       toastMessage('store/orderquote.error.notAuthenticated')
     } else {
@@ -291,53 +240,14 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
         orderForm?.items &&
         orderForm.items.length
       ) {
-        let address = null
-
-        if (shippingData?.address) {
-          const {
-            city,
-            complement,
-            country,
-            neighborhood,
-            number,
-            postalCode,
-            state,
-            street,
-          } = shippingData.address
-
-          address = {
-            city,
-            complement,
-            country,
-            neighborhood,
-            number,
-            postalCode,
-            state,
-            street,
-          }
-        }
-
-        const encodeCustomData = (data: any) => {
-          if (data?.customApps?.length) {
-            return {
-              customApps: data.customApps.map((item: any) => {
-                return {
-                  fields: JSON.stringify(item.fields),
-                  id: item.id,
-                  major: item.major,
-                }
-              }),
-            }
-          }
-
-          return null
-        }
+        // referenceName: String
+        // items: [CartItem]
+        // subtotal: Float
+        // note: String
+        // sendToSalesRep: Boolean
 
         const cart = {
-          id: null,
-          email: sessionResponse.namespaces.profile.email.value,
-          cartName: name,
-          description,
+          referenceName: name,
           items: orderForm.items.map((item: any) => {
             return {
               name: item.name,
@@ -352,35 +262,20 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
               sellingPrice: parseInt(String(item.sellingPrice * 100), 10),
             }
           }),
-          creationDate: new Date().toISOString(),
           subtotal: parseInt(String(subtotal * 100), 10),
-          discounts: parseInt(String(discounts), 10),
-          shipping: parseInt(String(shippingCost * 100), 10),
-          taxes: parseInt(String(taxes * 100), 10),
-          total: parseInt(String(value * 100), 10),
-          customData: encodeCustomData(customData),
-          address,
+          note,
+          sendToSalesRep,
         }
 
         SaveCartMutation({
-          variables: {
-            cart,
-          },
+          variables: cart,
         })
           .then((result: any) => {
             if (result.data.orderQuote) {
-              cart.id = result.data.orderQuote.substr(5)
               activeLoading(false)
               toastMessage('store/orderquote.create.success')
               activeLoading(false)
-              if (clearCart) {
-                handleClearCart(orderForm.orderFormId)
-              } else {
-                navigate({
-                  page: 'store.orderquote',
-                  fetchPage: true,
-                })
-              }
+              handleClearCart(orderForm.orderFormId)
             } else {
               toastMessage('store/orderquote.create.error')
               activeLoading(false)
@@ -396,7 +291,7 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
     }
   }
 
-  const saveQuote = () => {
+  const saveQuote = (sendToSalesRep: boolean) => {
     if (!name) {
       setState({
         ..._state,
@@ -405,7 +300,7 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
         }),
       })
     } else {
-      handleSaveCart()
+      handleSaveCart(sendToSalesRep)
     }
   }
 
@@ -457,24 +352,24 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
           </div>
           <div className="flex flex-row ph5 ph7-ns">
             <div
-              className={`flex flex-column w-100 mb5 ${handles.descriptionContainer}`}
+              className={`flex flex-column w-100 mb5 ${handles.noteContainer}`}
             >
               <Textarea
                 label={translateMessage({
                   id: 'store/orderquote.create.descriptionLabel',
                 })}
                 onChange={(e: any) =>
-                  setState({ ..._state, description: e.target.value })
+                  setState({ ..._state, note: e.target.value })
                 }
-                value={description}
+                value={note}
                 characterCountdownText={
                   <FormattedMessage
                     id="store/orderquote.create.characterLeft"
-                    values={{ count: _state.description.length }}
+                    values={{ count: _state.note.length }}
                   />
                 }
-                maxLength="100"
-                rows="2"
+                maxLength="500"
+                rows="4"
               />
             </div>
           </div>
@@ -502,30 +397,29 @@ const QuoteCreate: StorefrontFunctionComponent = () => {
           >
             <div className="flex flex-row">
               <div
-                className={`flex flex-column w-70 pt4 ${handles.checkboxClear}`}
+                className={`flex flex-column w-30 ${handles.buttonSaveQuote}`}
               >
-                <Checkbox
-                  checked={clearCart}
-                  id="clear"
-                  label={translateMessage({
-                    id: 'store/orderquote.button.clear',
-                  })}
-                  name="clearCheckbox"
-                  onChange={() => {
-                    setState({ ..._state, clearCart: !clearCart })
+                <Button
+                  variation="secondary"
+                  isLoading={savingQuote}
+                  onClick={() => {
+                    saveQuote(false)
                   }}
-                  value="option-0"
-                />
+                >
+                  <FormattedMessage id="store/orderquote.create.button.save-for-later" />
+                </Button>
               </div>
-              <div className={`flex flex-column w-30 ${handles.buttonSave}`}>
+              <div
+                className={`flex flex-column w-30 ${handles.buttonRequestQuote}`}
+              >
                 <Button
                   variation="primary"
                   isLoading={savingQuote}
                   onClick={() => {
-                    saveQuote()
+                    saveQuote(true)
                   }}
                 >
-                  <FormattedMessage id="store/orderquote.button.save" />
+                  <FormattedMessage id="store/orderquote.create.button.request-quote" />
                 </Button>
               </div>
             </div>

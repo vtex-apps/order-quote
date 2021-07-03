@@ -1,0 +1,17 @@
+query GetDimension {
+  getDimension(dimType: manualPrice) {
+    ruleCollection {
+      trigger {
+        effect {
+          description
+          effectType
+        }
+        condition {
+          conditionType
+          lessThan
+          greatherThan
+        }
+      }
+    }
+  }
+}

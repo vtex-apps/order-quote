@@ -1,18 +1,8 @@
 {
-  "store.orderquote": {
-    "blocks": ["orderquote"]
+  "store.order-quote": {
+    "blocks": ["quotes-table"]
   },
-  "orderquote": {
-    "props": {
-      "title": "Order Quote"
-    }
-  },
-  "store.create": {
-    "blocks": ["create"]
-  },
-  "create": {
-    "props": {
-      "title": "Create a quotation"
-    }
+  "store.create-quote": {
+    "blocks": ["create-quote"]
   }
 }

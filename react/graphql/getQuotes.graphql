@@ -1,0 +1,38 @@
+query getQuotes(
+  $organization: [String]
+  $costCenter: [String]
+  $status: [String]
+  $search: String
+  $page: Int
+  $pageSize: Int
+  $sortOrder: String
+  $sortBy: String
+) @context(scope: "private") {
+  getQuotes(
+    organization: $organization
+    costCenter: $costCenter
+    status: $status
+    search: $search
+    page: $page
+    pageSize: $pageSize
+  ) {
+    data {
+      id
+      referenceName
+      creatorEmail
+      creatorRole
+      creationDate
+      expirationDate
+      lastUpdate
+      subtotal
+      status
+      organization
+      costCenter
+      viewedBySales
+      viewedByCustomer
+    }
+    pagination {
+      total
+    }
+  }
+}
